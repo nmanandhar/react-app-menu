@@ -1,0 +1,45 @@
+{
+  "name": "react-app-menu",
+  "version": "1.0.0",
+  "description": "a tiny react component to build desktop like menu with keyboard navigation and hotkeys support",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "jsnext:main": "dist/index.es.js",
+  "scripts": {
+    "build:styles": "node-sass src/styles/react-app-menu.scss dist/styles/react-app-menu.css",
+    "build:rollup": "rollup -c",
+    "build": "npm run build:styles && npm run build:rollup",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "npm run build"
+  },
+  "keywords": ["react","menu","hotkey","keyboard navigation"],
+  "author": "Nirmal Manandhar (nmanandhar777@gmail.com)",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/react": "^16.9.32",
+    "@types/react-dom": "^16.9.6",
+    "@types/react-test-renderer": "^16.9.2",
+    "node-sass": "^4.13.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-scripts-ts": "^3.1.0",
+    "react-test-renderer": "^16.13.1",
+    "rollup": "^2.3.3",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-peer-deps-external": "^2.2.2",
+    "rollup-plugin-typescript2": "^0.27.0",
+    "typescript": "^3.8.3"
+  },
+  "peerDependencies": {
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nmanandhar/react-app-menu.git"
+  }
+}
