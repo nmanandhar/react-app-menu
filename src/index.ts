@@ -1,3 +1,5 @@
-import MenuBar from "./MenuBar";
+import {MenuBar} from "./menu/MenuBar";
+import {Menu} from './menu/Menu';
+import {Separator} from "./menu/Separator";
 
-export {MenuBar};
+export {MenuBar, Menu, Separator};

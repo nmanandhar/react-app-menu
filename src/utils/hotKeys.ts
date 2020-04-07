@@ -1,3 +1,14 @@
+export enum Key {
+    UP = 'ArrowUp',
+    DOWN = 'ArrowDown',
+    LEFT = 'ArrowLeft',
+    RIGHT = 'ArrowRight',
+    ESC = 'Escape',
+    CTRL = 'Control',
+    ALT = 'Alt',
+    SHIFT = 'Shift',
+    ENTER = 'Enter'
+}
 
 
 export const isNotHotkey = (event: KeyboardEvent): boolean => {
@@ -20,42 +31,19 @@ export const hotKeyString = (event: KeyboardEvent) => {
 
 /**
  * Given an array of hot keys like [Ctrl Shift Alt D] returns a normalized hotKey string ctrl-alt-shift-d
- * @param keys
+ * @param hotKeys
  */
-export const normalizeKey = (keys: string[]): string | null => {
-    if (!keys) {
+export const normalizeKey = (hotKeys: string[]): string | null => {
+    let keys = hotKeys.slice().map(key => key.toLowerCase());
+    let modifierKeys = [];
+
+    keys.indexOf("ctrl") > -1 && modifierKeys.push("ctrl");
+    keys.indexOf("alt") > -1 && modifierKeys.push("alt");
+    keys.indexOf("shift") > -1 && modifierKeys.push("shift");
+
+    keys = keys.filter(k => k.length === 1);
+    if (keys.length !== 1) {
         return null;
     }
-    let hotKeys = keys.slice();
-    let temp = [];
-    let filterdHotKeys: string[];
-
-
-    filterdHotKeys = hotKeys.filter(key => key.toLowerCase() !== "ctrl");
-    if (filterdHotKeys.length !== hotKeys.length) {
-        temp.push("ctrl");
-        hotKeys = filterdHotKeys;
-    }
-
-    filterdHotKeys = hotKeys.filter(key => key.toLowerCase() !== "alt");
-    if (filterdHotKeys.length !== hotKeys.length) {
-        temp.push("alt");
-        hotKeys = filterdHotKeys;
-    }
-
-    filterdHotKeys = hotKeys.filter(key => key.toLowerCase() !== "shift");
-    if (filterdHotKeys.length !== hotKeys.length) {
-        temp.push("shift");
-        hotKeys = filterdHotKeys;
-    }
-
-
-    if (hotKeys.length !== 1 || hotKeys[0].length !== 1 || temp.length < 1) {
-        console.warn('Invalid hot key ', keys);
-        return null;
-    }
-
-    temp.push(filterdHotKeys[0].toLowerCase());
-
-    return temp.join('-');
+    return [...modifierKeys, keys[0]].join('-');
 };
