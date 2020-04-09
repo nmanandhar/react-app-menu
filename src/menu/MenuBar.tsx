@@ -4,7 +4,7 @@ import {firstChildMenu, isRootMenu, lastChildMenu, nextMenu, nextRootMenu, paren
 import {hotKeyString, isNotHotkey, Key} from "../utils/hotKeys";
 import {classNames} from "../utils/classNames";
 import {CLASS_MENUBAR} from "../utils/constants";
-import { MenuBarContext } from './MenubarContext';
+import {MenuBarContext} from './MenubarContext';
 
 type HotKeyCallback = () => void;
 
@@ -57,7 +57,7 @@ export class MenuBar extends React.PureComponent<MenuBarProps, {}> {
     }
 
     handleKeyboardNavigation(event: React.KeyboardEvent) {
-        let currentMenu = event.target as HTMLElement;
+        let currentMenu = document.activeElement as HTMLLIElement
         if (event.key === Key.ESC) {
             (document.activeElement as HTMLElement).blur();
         } else if (event.key === Key.DOWN) {
@@ -66,10 +66,11 @@ export class MenuBar extends React.PureComponent<MenuBarProps, {}> {
             isRootMenu(currentMenu) ? lastChildMenu(currentMenu)?.focus() : nextMenu(currentMenu, 'UP')?.focus();
         } else if (event.key === Key.RIGHT) {
             let childMenu = firstChildMenu(currentMenu);
-            childMenu ? childMenu.focus() : nextRootMenu(currentMenu, 'RIGHT')?.focus();
+            isRootMenu(currentMenu) || !childMenu ? nextRootMenu(currentMenu, 'RIGHT')?.focus()
+                : childMenu.focus();
         } else if (event.key === Key.LEFT) {
             let parent = parentMenu(currentMenu);
-            parent ? parent.focus() : nextRootMenu(currentMenu, 'LEFT')?.focus();
+            isRootMenu(parent) || !parent ? nextRootMenu(currentMenu, 'LEFT')?.focus() : parent.focus();
         }
     }
 

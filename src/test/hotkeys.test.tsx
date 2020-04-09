@@ -3,7 +3,6 @@ import {mount, ReactWrapper} from 'enzyme';
 import {Menu} from '../menu/Menu';
 import {MenuBar} from '../menu/MenuBar';
 import sinon, {SinonSpy} from 'sinon';
-import prettier from 'prettier';
 import expect from 'expect';
 import {CLASS_MENU_HOTKEY, CLASS_MENU_HOTKEY_DISABLED} from "../utils/constants";
 
@@ -168,12 +167,4 @@ describe('HotKeys', () => {
 
 function triggerHotKey() {
     document.dispatchEvent(new KeyboardEvent('keydown', {key: 'o', ctrlKey: true}));
-}
-
-function html(wrapper: ReactWrapper) {
-    console.log(nice(wrapper.html()));
-}
-
-function nice(str: string): string {
-    return prettier.format(str, {semi: false, parser: "html"});
 }
