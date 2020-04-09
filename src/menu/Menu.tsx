@@ -2,18 +2,14 @@ import React, {ReactNode} from "react";
 import {Key, normalizeKey} from "../utils/hotKeys";
 import {classNames} from "../utils/classNames";
 import {
-    CLASS_MENU,
-    CLASS_MENU_DISABLED,
-    CLASS_MENU_HOTKEY,
-    CLASS_MENU_ICON,
-    CLASS_MENU_ICON_EXPAND,
-    CLASS_MENU_LABEL,
-    CLASS_MENU_LABEL_CONTAINER,
-    CLASS_MENU_ROOT,
+    CLASS_MENU, CLASS_MENU_DISABLED, CLASS_MENU_ROOT,
+    CLASS_MENU_LABEL_CONTAINER, CLASS_MENU_LABEL,
+    CLASS_MENU_ICON, CLASS_MENU_ICON_EXPAND,
+    CLASS_MENU_HOTKEY, CLASS_MENU_HOTKEY_DISABLED,
     CLASS_MENU_SUBMENUS
 } from "../utils/constants";
 import {Separator} from "./Separator";
-import { MenuBarContext } from "./MenubarContext";
+import {MenuBarContext} from "./MenubarContext";
 
 
 type MenuProps = {
@@ -57,7 +53,8 @@ export class Menu extends React.PureComponent<MenuProps, any> {
         let className = classNames(CLASS_MENU, {[CLASS_MENU_DISABLED]: disabled, [CLASS_MENU_ROOT]: root});
 
         return (
-            <li ref={this.ref} tabIndex={root ? 0 : -1} className={className} onKeyDown={this.activateMenuOnEnter}>
+            <li ref={this.ref} tabIndex={root ? 0 : disabled ? undefined : -1} className={className}
+                onKeyDown={this.activateMenuOnEnter}>
                 <div className={CLASS_MENU_LABEL_CONTAINER} onClick={clickHandler}>
                     {checked && <span className={CLASS_MENU_ICON}>{this.checkedIcon}</span>}
                     {icon && checked !== true && <span className={CLASS_MENU_ICON}>{icon}</span>}
@@ -72,7 +69,7 @@ export class Menu extends React.PureComponent<MenuProps, any> {
                             : label
                     }</span>
 
-                    {hotKeys && <span className={CLASS_MENU_HOTKEY}>{hotKeys.join(' ')}</span>}
+                    {hotKeys && <span className={this.hotKeyClasses()}>{hotKeys.join(' ')}</span>}
                     {!root && children && <span className={CLASS_MENU_ICON_EXPAND}>{this.expandIcon}</span>}
                 </div>
                 {children && !disabled &&
@@ -85,6 +82,26 @@ export class Menu extends React.PureComponent<MenuProps, any> {
 
     componentDidMount(): void {
         this.registerHotKeys();
+    }
+
+
+    private hotKeyClasses() {
+        let isHotKeyDisabled = this.props.disabled || (!this.props.onSelect && (!this.props.hotKeys || !this.context?.props.onSelect));
+        return classNames(CLASS_MENU_HOTKEY, {[CLASS_MENU_HOTKEY_DISABLED]: isHotKeyDisabled});
+    }
+
+    componentDidUpdate(prevProps: Readonly<MenuProps>, prevState: Readonly<any>, snapshot?: any): void {
+        this.unregisterHotKeys(prevProps);
+        this.registerHotKeys();
+    }
+
+    private unregisterHotKeys(oldProps: MenuProps) {
+        if (oldProps.hotKeys) {
+            let hotKey = normalizeKey(oldProps.hotKeys);
+            if (hotKey) {
+                this.context?.unregister(hotKey);
+            }
+        }
     }
 
     private registerHotKeys() {

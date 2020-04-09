@@ -90,8 +90,7 @@ ul.reactAppMenubar--menu--submenus {
 // Gray out disabled items
 // not setting pointer-event: none so that focus is not lost when clicking a disabled item
 .reactAppMenubar--menu-isDisabled > .reactAppMenubar--menu--labelContainer,.reactAppMenubar--menu-isDisabled:focus > .reactAppMenubar--menu--labelContainer{
-  background: #F1F1F1 !important;
-  color: lightgray !important;
+  opacity: .5;
 }
 
 
@@ -129,8 +128,11 @@ ul.reactAppMenubar--menu--submenus {
 
 .reactAppMenubar--menu--hotKeys {
   margin-left: 20px;
-  font-size: .7rem;
+  font-size: .9em;
   margin-right: 2px;
+}
+.reactAppMenubar--menu--hotKeys.reactAppMenubar--menu--hotKeys-disabled{
+  opacity: .4;
 }
 
 .reactAppMenubar--menu--expandIcon {

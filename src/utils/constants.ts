@@ -7,5 +7,6 @@ export const CLASS_MENU_LABEL_CONTAINER = `${CLASS_MENUBAR}--menu--labelContaine
 export const CLASS_MENU_LABEL = `${CLASS_MENUBAR}--menu--label`;
 export const CLASS_MENU_ICON = `${CLASS_MENUBAR}--menu--icon`;
 export const CLASS_MENU_ICON_EXPAND = `${CLASS_MENUBAR}--menu--iconExpand`;
-export const CLASS_MENU_HOTKEY = `${CLASS_MENUBAR}--menu--hotkeys`;
+export const CLASS_MENU_HOTKEY = `${CLASS_MENUBAR}--menu--hotKeys`;
+export const CLASS_MENU_HOTKEY_DISABLED = `${CLASS_MENUBAR}--menu--hotKeys-disabled`;
 export const CLASS_MENU_SUBMENUS = `${CLASS_MENUBAR}--menu--submenus`;
