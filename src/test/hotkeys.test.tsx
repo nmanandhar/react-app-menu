@@ -5,6 +5,7 @@ import {MenuBar} from '../menu/MenuBar';
 import sinon, {SinonSpy} from 'sinon';
 import expect from 'expect';
 import {CLASS_MENU_HOTKEY, CLASS_MENU_HOTKEY_DISABLED} from "../utils/constants";
+import {Keys} from "../utils/Keys";
 
 type AppProps = { disableMenu: boolean };
 
@@ -44,6 +45,14 @@ describe('HotKeys', () => {
             .toBe(false);
     };
 
+    it('should not trigger hotkeys when keyboard props is set to false', () => {
+        mountComponent(<MenuBar keyboard={false}>
+            <Menu label={'Open File'} hotKeys={["Ctrl", "O"]} onSelect={menuCallback}/>
+        </MenuBar>);
+
+        triggerHotKey();
+        sinon.assert.notCalled(menubarCallback);
+    });
 
     it('should invoke onSelect prop of Menu when triggered', function () {
         mountComponent(<MenuBar>
@@ -140,6 +149,29 @@ describe('HotKeys', () => {
         triggerHotKey();
         triggerHotKey();
         sinon.assert.calledTwice(menubarCallback);
+    });
+
+    it('can be changed by changing props', () => {
+
+        const TestApp = ({hotKeys}: { hotKeys: string[] }) => (
+            <MenuBar>
+                <Menu label={'Open File'} hotKeys={hotKeys} onSelect={menubarCallback}/>
+            </MenuBar>
+        );
+
+        mountComponent(<TestApp hotKeys={Keys.ctrlAlt("O")}/>);
+
+        document.dispatchEvent(new KeyboardEvent('keydown', {key: 'o', ctrlKey: true, altKey: true}));
+        sinon.assert.calledOnce(menubarCallback);
+
+        wrapper.setProps({"hotKeys": Keys.alt("O")});
+        menubarCallback.resetHistory();
+
+        document.dispatchEvent(new KeyboardEvent('keydown', {key: 'o', ctrlKey: true, altKey: true}));
+        sinon.assert.notCalled(menubarCallback);
+
+        document.dispatchEvent(new KeyboardEvent('keydown', {key: 'o', altKey: true}));
+        sinon.assert.calledOnce(menubarCallback);
     });
 
     it('should not be invoked after MenuBar is unmounted', () => {

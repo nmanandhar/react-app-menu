@@ -1,61 +1,49 @@
-export const firstChild = (element: HTMLElement | null, withClass?: string, excludeClass?: string): HTMLElement | null => {
-    if (!element) {
-        return null;
-    }
-    let firstChild = element.firstElementChild as HTMLElement;
-    if ((withClass === undefined || hasClass(firstChild, withClass)) && (excludeClass === undefined || !hasClass(firstChild, excludeClass))) {
-        return firstChild;
-    }
-    return sibling(firstChild, withClass, excludeClass);
-};
+type ElementOrNull = Element | null;
 
-export const lastChild = (element: HTMLElement | null, className?: string, excludeClassName?: string): HTMLElement | null => {
+export const firstChild = (element: ElementOrNull, withClass?: string, excludeClass?: string): ElementOrNull => findMatchingChild(element, false, withClass, excludeClass);
+export const lastChild = (element: ElementOrNull, withClass?: string, excludeClass?: string): ElementOrNull => findMatchingChild(element, true, withClass, excludeClass);
+
+const findMatchingChild = (element: ElementOrNull, reverse: boolean, withClass?: string, excludeClass?: string): ElementOrNull => {
     if (!element) {
         return null;
     }
-    let lastChild = element.lastElementChild as HTMLElement;
-    if ((className === undefined || hasClass(lastChild, className)) && (excludeClassName === undefined || !hasClass(lastChild, excludeClassName))) {
-        return lastChild;
+    let childElement = reverse ? element.lastElementChild : element.firstElementChild;
+    if (isMatch(childElement, withClass, excludeClass)) {
+        return childElement;
     } else {
-        return prevSibling(lastChild, className, excludeClassName);
+        return reverse ? prevSibling(childElement, withClass, excludeClass) : nextSibling(childElement, withClass, excludeClass);
     }
 };
 
-export const sibling = (element: HTMLElement | null, withClass?: string, excludeClass?: string): HTMLElement | null => {
+
+export const nextSibling = (element: ElementOrNull, withClass?: string, excludeClass?: string): ElementOrNull => {
+    return findMatchingSibling(element, (node) => node.nextElementSibling, withClass, excludeClass);
+};
+
+export const prevSibling = (element: ElementOrNull, withClass?: string, excludeClass?: string): ElementOrNull => {
+    return findMatchingSibling(element, (node) => node.previousElementSibling, withClass, excludeClass);
+};
+
+const findMatchingSibling = (element: ElementOrNull, nextFn: (element: Element) => ElementOrNull, withClass?: string, excludeClass?: string): ElementOrNull => {
     if (!element) {
         return null;
     }
-    let sibling: HTMLElement | null = element.nextElementSibling as HTMLElement;
-    while (sibling) {
-        if ((withClass === undefined || hasClass(sibling, withClass)) && (excludeClass === undefined || !hasClass(sibling, excludeClass))) {
-            return sibling;
+    let next = nextFn(element);
+    while (next) {
+        if (isMatch(next, withClass, excludeClass)) {
+            return next;
         }
-        sibling = sibling.nextElementSibling as HTMLElement;
+        next = nextFn(next);
     }
     return null;
 };
 
 
-export const prevSibling = (element: HTMLElement | null, withClass?: string, excludeClass?: string): HTMLElement | null => {
+export const ancestor = (element: ElementOrNull, ancestorClass: string, maxLevels: number = 5): ElementOrNull => {
     if (!element) {
         return null;
     }
-    let sibling: HTMLElement | null = element.previousElementSibling as HTMLElement;
-    while (sibling) {
-        if ((withClass === undefined || hasClass(sibling, withClass)) && (excludeClass === undefined || !hasClass(sibling, excludeClass))) {
-            return sibling;
-        }
-        sibling = sibling.previousElementSibling as HTMLElement;
-    }
-    return null;
-};
-
-
-export const ancestor = (element: HTMLElement | null, ancestorClass: string, maxLevels: number = 5): HTMLElement | null => {
-    if (!element) {
-        return null;
-    }
-    let parent: HTMLElement | null = element;
+    let parent: ElementOrNull = element;
     for (let i = 1; i <= maxLevels; i++) {
         parent = parent.parentElement;
         if (parent === null) {
@@ -67,6 +55,10 @@ export const ancestor = (element: HTMLElement | null, ancestorClass: string, max
     return null;
 };
 
-export const hasClass = (element: Element | null, className: string): boolean => {
+const isMatch = (element: ElementOrNull, withClass?: string, excludeClass?: string): boolean => {
+    return element !== null && (withClass === undefined || hasClass(element, withClass)) && (excludeClass === undefined || !hasClass(element, excludeClass));
+};
+
+export const hasClass = (element: ElementOrNull, className: string): boolean => {
     return element != null && element.classList.contains(className);
 };

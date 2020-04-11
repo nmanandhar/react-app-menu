@@ -14,6 +14,7 @@
     "mocha": "cross-env NODE_ENV=test mocha -r mocha.babel.register.config.js -r jsdom-global/register -r enzyme.adapter.config.js  --extension tsx",
     "test": "nyc --reporter=lcov npm run mocha -- src/test",
     "coverage": "codecov",
+    "testCoverage": "npm run test && npm run coverage",
     "test:watch": "npm run mocha -- --watch src/test ",
     "prepare": "npm run build"
   },

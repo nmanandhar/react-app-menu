@@ -2,9 +2,10 @@ import React, {ReactNode} from 'react';
 import {Menu} from './Menu';
 import {firstChildMenu, isRootMenu, lastChildMenu, nextMenu, nextRootMenu, parentMenu} from "../utils/menuTraversal";
 import {hotKeyString, isNotHotkey, Key} from "../utils/hotKeys";
-import {classNames} from "../utils/classNames";
 import {CLASS_MENUBAR} from "../utils/constants";
 import {MenuBarContext} from './MenubarContext';
+import {MdKeyboardArrowRight} from '../utils/icons/MdKeyboardArrowRight';
+import {FaCheck} from "../utils/icons/FaCheck";
 
 type HotKeyCallback = () => void;
 
@@ -21,8 +22,8 @@ export class MenuBar extends React.PureComponent<MenuBarProps, {}> {
     static Menu = Menu;
 
     static defaultProps = {
-        checkedIcon: "☑",
-        expandIcon: "▶",
+        checkedIcon: <FaCheck/>,
+        expandIcon: <MdKeyboardArrowRight/>,
         keyboard: true
     };
 
@@ -36,14 +37,16 @@ export class MenuBar extends React.PureComponent<MenuBarProps, {}> {
     }
 
     render() {
+        let barClassName = `${CLASS_MENUBAR}${this.props.className ? this.props.className : ''}`;
+
         return <MenuBarContext.Provider value={this}>
-            <ul className={classNames(CLASS_MENUBAR, this.props.className)} onKeyDown={this.handleKeyboardNavigation}>
+            <ul className={barClassName} onKeyDown={this.handleKeyboardNavigation}>
                 {React.Children.map(this.props.children, (child) => {
                     // @ts-ignore
                     return React.cloneElement(child, {root: true});
                 })}
             </ul>
-        </MenuBarContext.Provider>
+        </MenuBarContext.Provider>;
     }
 
     componentDidMount(): void {
@@ -57,21 +60,24 @@ export class MenuBar extends React.PureComponent<MenuBarProps, {}> {
     }
 
     handleKeyboardNavigation(event: React.KeyboardEvent) {
-        let currentMenu = document.activeElement as HTMLLIElement
+        let currentMenu = document.activeElement;
+        let nextFocusElement: Element | null = null;
+
         if (event.key === Key.ESC) {
             (document.activeElement as HTMLElement).blur();
         } else if (event.key === Key.DOWN) {
-            isRootMenu(currentMenu) ? firstChildMenu(currentMenu)?.focus() : nextMenu(currentMenu, 'DOWN')?.focus();
+            nextFocusElement = isRootMenu(currentMenu) ? firstChildMenu(currentMenu) : nextMenu(currentMenu, 'DOWN');
         } else if (event.key === Key.UP) {
-            isRootMenu(currentMenu) ? lastChildMenu(currentMenu)?.focus() : nextMenu(currentMenu, 'UP')?.focus();
+            nextFocusElement = isRootMenu(currentMenu) ? lastChildMenu(currentMenu) : nextMenu(currentMenu, 'UP');
         } else if (event.key === Key.RIGHT) {
             let childMenu = firstChildMenu(currentMenu);
-            isRootMenu(currentMenu) || !childMenu ? nextRootMenu(currentMenu, 'RIGHT')?.focus()
-                : childMenu.focus();
+            nextFocusElement = isRootMenu(currentMenu) || !childMenu ? nextRootMenu(currentMenu, 'RIGHT') : childMenu;
         } else if (event.key === Key.LEFT) {
             let parent = parentMenu(currentMenu);
-            isRootMenu(parent) || !parent ? nextRootMenu(currentMenu, 'LEFT')?.focus() : parent.focus();
+            nextFocusElement = isRootMenu(parent) || !parent ? nextRootMenu(currentMenu, 'LEFT') : parent;
         }
+
+        (nextFocusElement as HTMLLIElement)?.focus();
     }
 
     handleHotKeys(event: KeyboardEvent): void {

@@ -7,6 +7,12 @@ dist
 # Output of 'npm pack'
 *.tgz
 
+# Output of nyc
+.nyc_output
+
+# Code coverage
+coverage
+
 # dotenv environment variables file
 .env
 .env.test

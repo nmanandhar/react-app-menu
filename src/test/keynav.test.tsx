@@ -5,6 +5,7 @@ import {MenuBar} from "../menu/MenuBar";
 import {CLASS_MENU, CLASS_MENU_LABEL, CLASS_MENUBAR} from "../utils/constants";
 import expect from 'expect';
 import {Key} from "../utils/hotKeys";
+import {Separator} from "../menu/Separator";
 
 
 /**
@@ -25,6 +26,7 @@ const TestMenu = <MenuBar>
         <Menu label={'New'}>
             <Menu label={'Notebook'} disabled={true}/>
             <Menu label={'Note'}/>
+            <Separator/>
             <Menu label={'Folder'} disabled={true}/>
             <Menu label={'Diagram'}/>
         </Menu>
@@ -135,6 +137,16 @@ describe('Keyboard Navigation (Default props)', () => {
                 expect(activeMenu()).toBe('File');
             });
         });
+
+        describe('ESC key', () => {
+            it('should deactive the menu', () => {
+                focusOnMenu('Help');
+                expect(activeMenu()).toBe('Help');
+                key(Key.ESC);
+                expect(activeMenu()).toBe(null);
+            });
+
+        });
     });
 
     describe('When subMenu is active', () => {
@@ -210,6 +222,16 @@ describe('Keyboard Navigation (Default props)', () => {
                 focusOnMenu('Open');
                 key(Key.LEFT);
                 expect(activeMenu()).toBe("Open");
+            });
+        });
+
+        describe('ESC key', () => {
+            it('should close the menu', () => {
+                focusOnMenu('Note');
+                expect(activeMenu()).toBe('Note');
+                key(Key.ESC);
+                expect(activeMenu()).toBe(null);
+
             });
         });
     });
