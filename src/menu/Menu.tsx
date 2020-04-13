@@ -20,9 +20,9 @@ import {MenuBarContext} from "./MenubarContext";
 
 
 type MenuProps = {
+    menuId?: string;
     label: string | ReactNode;
-    menuKey?: string;      //optional key that will be passed when menu is selected,
-    icon?: React.ReactNode;
+    icon?: string |React.ReactNode;
     hotKeys?: string[];
     focusKey?: string;
     show?: boolean;
@@ -76,7 +76,6 @@ export class Menu extends React.PureComponent<MenuProps, any> {
         }
 
 
-
         return (
             <li ref={this.ref} tabIndex={root ? 0 : disabled ? undefined : -1} onKeyDown={this.activateMenuOnEnter}
                 className={classNames(MENU, {[MENU_DISABLED]: disabled, [MENU_ROOT]: root})}>
@@ -95,7 +94,8 @@ export class Menu extends React.PureComponent<MenuProps, any> {
 
                     {hotKeys && !children && <span
                         className={classNames(HOTKEY, {[HOTKEY_DISABLED]: this.hotKeyDisabled()})}>{hotKeys.join(' ')}</span>}
-                    {!root && !hotKeys && this.props.longestSubmenuHotKey && <span className={classNames(HOTKEY,HOTKEY_INVISIBLE )}>{this.props.longestSubmenuHotKey}</span>}
+                    {!root && !hotKeys && this.props.longestSubmenuHotKey &&
+                    <span className={classNames(HOTKEY, HOTKEY_INVISIBLE)}>{this.props.longestSubmenuHotKey}</span>}
 
                     {!root && children && <span className={classNames(ICON, ICON_RIGHT)}>{this.expandIcon}</span>}
                 </div>
@@ -135,15 +135,15 @@ export class Menu extends React.PureComponent<MenuProps, any> {
     }
 
     private registerHotKeys() {
-        let {disabled, show, menuKey, hotKeys, focusKey, onSelect} = this.props;
+        let {disabled, show, menuId, hotKeys, focusKey, onSelect} = this.props;
         if (!disabled && show && this.context) {
             //register hot key if any
             if (hotKeys) {
                 let hotKey = normalizeKey(hotKeys);
                 if (hotKey && onSelect) {
                     this.context.registerCallback(hotKey, onSelect);
-                } else if (hotKey && menuKey) {
-                    this.context.registerMenuKey(hotKey, menuKey);
+                } else if (hotKey && menuId) {
+                    this.context.registerMenuId(hotKey, menuId);
                 } else if (hotKey) {
                     console.warn(`Could not register hotkey ${hotKey}. Provide a onSelect method on Menu or its parent MenuBar to register hotkey`);
                 }
@@ -176,14 +176,14 @@ export class Menu extends React.PureComponent<MenuProps, any> {
         if (this.props.onSelect) {
             this.props.onSelect();
 
-        } else if (this.props.menuKey) {
+        } else if (this.props.menuId) {
             if (this.context && this.context.props.onSelect) {
-                this.context.props.onSelect(this.props.menuKey);
+                this.context.props.onSelect(this.props.menuId);
             } else {
                 console.log(`No handlers found for menu ${this.props.label}. Define a onSelect method on Menu or globally on the MenuBar`);
             }
         } else {
-            console.log(`No handlers found for menu ${this.props.label} click. Define a onSelect method on Menu or provide a menuKey so that MenuBar can handle the event`);
+            console.log(`No handlers found for menu ${this.props.label} click. Define a onSelect method on Menu or provide a menuId so that MenuBar can handle the event`);
         }
     }
 

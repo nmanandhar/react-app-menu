@@ -25,4 +25,8 @@ export class Keys {
     static altShift(key: string) {
         return ["Alt", "Shift", key.trim()];
     }
+
+    static ctrlAltShift(key: string) {
+        return ["Ctrl","Alt", "Shift", key.trim()];
+    }
 }

@@ -33,7 +33,7 @@ ul.reactAppMenubar--menu--submenus {
   position: absolute;
   z-index: $menu-z-index;
   list-style: none;
-  padding: 0;
+  padding: 0 ;
   margin: 0;
   background: $menu-background;
   border: 1px solid $menu-border;
@@ -131,9 +131,9 @@ ul.reactAppMenubar--menu--submenus {
 }
 
 .reactAppMenubar--menu--hotKeys {
-  margin-left: 2px;
+  margin-left: 4px;
   font-size: .8em;
-  margin-right: 2px;
+  margin-right: 4px;
   font-style: oblique;
 }
 

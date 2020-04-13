@@ -25,7 +25,7 @@ describe('HotKeys', () => {
         // @ts-ignore
         wrapper = undefined;
         menuCallback = sinon.spy();
-        menubarCallback = sinon.spy((menuKey) => {
+        menubarCallback = sinon.spy((menuId) => {
         });
     });
 
@@ -66,13 +66,13 @@ describe('HotKeys', () => {
 
     it('should invoke the onSelect prop of MenuBar if onSelect if menu has no onSelect prop', () => {
         mountComponent(<MenuBar onSelect={menubarCallback}>
-            <Menu menuKey={'menuKeyOpenFile'} label={'Open File'} hotKeys={["Ctrl", "O"]}/>
+            <Menu menuId={'menuIdOpenFile'} label={'Open File'} hotKeys={["Ctrl", "O"]}/>
         </MenuBar>);
 
         expectHotkeyToBeEnabled();
         triggerHotKey();
 
-        sinon.assert.calledWith(menubarCallback, 'menuKeyOpenFile');
+        sinon.assert.calledWith(menubarCallback, 'menuIdOpenFile');
 
     });
 

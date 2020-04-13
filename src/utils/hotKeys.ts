@@ -44,7 +44,7 @@ export const normalizeKey = (hotKeys: string[]): string | null => {
     keys.indexOf("alt") > -1 && modifierKeys.push("alt");
     keys.indexOf("shift") > -1 && modifierKeys.push("shift");
 
-    keys = keys.filter(k => k.length === 1);
+    keys = keys.filter(k => ["ctrl", "alt", "shift"].indexOf(k) < 0);
     if (keys.length !== 1) {
         return null;
     }

@@ -5,18 +5,17 @@ import {hotKeyString, isNotHotkey, Key} from "../utils/hotKeys";
 import {MENUBAR, MENUBAR_HOVERABLE} from "../utils/classNames";
 import {MenuBarContext} from './MenubarContext';
 import {MdKeyboardArrowRight} from '../utils/icons/MdKeyboardArrowRight';
-import {FaCheck} from "../utils/icons/FaCheck";
 import {classNames} from "../utils/classNames";
 
 type HotKeyCallback = () => void;
 
 
 type MenuBarProps = {
-    onSelect?: (menuItem: string) => void,
+    onSelect?: (menuId: string) => void,
     className?: string;
     expandIcon?: string | ReactNode;
     checkedIcon?: string | ReactNode;
-    keyboard?: boolean;
+    hotkeys?: boolean;
     openMenusOnHover?: boolean;
 }
 
@@ -24,9 +23,10 @@ export class MenuBar extends React.PureComponent<MenuBarProps, {}> {
     static Menu = Menu;
 
     static defaultProps = {
-        checkedIcon: <FaCheck/>,
+        checkedIcon: "✔",
         expandIcon: <MdKeyboardArrowRight/>,
         keyboard: true,
+        hotkeys: true,
         openMenusOnHover: false
     };
 
@@ -53,7 +53,7 @@ export class MenuBar extends React.PureComponent<MenuBarProps, {}> {
     }
 
     componentDidMount(): void {
-        if (this.props.keyboard) {
+        if (this.props.hotkeys) {
             document.addEventListener('keydown', this.handleHotKeys);
         }
     }
@@ -99,10 +99,10 @@ export class MenuBar extends React.PureComponent<MenuBarProps, {}> {
         this.hotkeyCallbacks[hotKey] = callback;
     }
 
-    registerMenuKey(hotKey: string, menuKey: string) {
+    registerMenuId(hotKey: string, menuId: string) {
         this.hotkeyCallbacks[hotKey] = () => {
             if (this.props.onSelect) {
-                this.props.onSelect(menuKey);
+                this.props.onSelect(menuId);
             }
         };
     }
