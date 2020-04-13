@@ -4,7 +4,7 @@ import {Menu} from '../menu/Menu';
 import {MenuBar} from '../menu/MenuBar';
 import sinon, {SinonSpy} from 'sinon';
 import expect from 'expect';
-import {CLASS_MENU_HOTKEY, CLASS_MENU_HOTKEY_DISABLED} from "../utils/constants";
+import {HOTKEY, HOTKEY_DISABLED} from "../utils/classNames";
 import {Keys} from "../utils/Keys";
 
 type AppProps = { disableMenu: boolean };
@@ -34,14 +34,14 @@ describe('HotKeys', () => {
     });
 
     const expectHotkeyToBeDisabled = () => {
-        expect(wrapper.contains(<span className={`${CLASS_MENU_HOTKEY}`}>Ctrl O</span>)).toBe(false);
-        expect(wrapper.contains(<span className={`${CLASS_MENU_HOTKEY} ${CLASS_MENU_HOTKEY_DISABLED}`}>Ctrl O</span>))
+        expect(wrapper.contains(<span className={`${HOTKEY}`}>Ctrl O</span>)).toBe(false);
+        expect(wrapper.contains(<span className={`${HOTKEY} ${HOTKEY_DISABLED}`}>Ctrl O</span>))
             .toBe(true);
     };
 
     const expectHotkeyToBeEnabled = () => {
-        expect(wrapper.contains(<span className={`${CLASS_MENU_HOTKEY}`}>Ctrl O</span>)).toBe(true);
-        expect(wrapper.contains(<span className={`${CLASS_MENU_HOTKEY} ${CLASS_MENU_HOTKEY_DISABLED}`}>Ctrl O</span>))
+        expect(wrapper.contains(<span className={`${HOTKEY}`}>Ctrl O</span>)).toBe(true);
+        expect(wrapper.contains(<span className={`${HOTKEY} ${HOTKEY_DISABLED}`}>Ctrl O</span>))
             .toBe(false);
     };
 

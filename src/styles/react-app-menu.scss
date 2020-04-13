@@ -1,29 +1,33 @@
-$menu-color: white;
+$menu-background: #fff;
+$menu-background-focus: #ddd;
+$menu-background-hover: cornflowerblue;
 $menu-border: #ccc;
-$menu-focus-background: #ddd;
-$menu-focus-text: black;
-$menu-hover-color: cornflowerblue;
+$menu-shadow: rgba(60, 64, 67, .15);
+$menu-text-hover: white;
 $menu-z-index: 100;
+$separator-border: rgb(218, 220, 224);
 
+// display menubar as row flex so that root menus are placed one after another
 ul.reactAppMenubar {
+  display: flex;
   list-style: none;
   padding: 0;
   margin: 0;
-  display: flex;
   user-select: none;
-  color: black;
 }
 
-.reactAppMenubar--menu-separator{
-  height: 1px;
-  border-bottom: 1px solid rgb(218, 220, 224);
+// menu separator have a 1px border
+.reactAppMenubar--menu-separator {
+  border-bottom: 1px solid $separator-border;
 }
 
+// place submenus relative to menu
 li.reactAppMenubar--menu {
-  position: relative; //position submenus relative to this menu
+  position: relative;
   outline: none;
 }
 
+// style menus and hide them by default
 ul.reactAppMenubar--menu--submenus {
   display: none;
   position: absolute;
@@ -31,117 +35,113 @@ ul.reactAppMenubar--menu--submenus {
   list-style: none;
   padding: 0;
   margin: 0;
-  background: $menu-color;
+  background: $menu-background;
   border: 1px solid $menu-border;
-  box-shadow: 0 2px 6px 2px rgba(60, 64, 67, .15);
+  box-shadow: 0 2px 6px 2px $menu-shadow;
   border-radius: 4px;
 }
 
 //place submenus to the right
-.reactAppMenubar--menu:not(.reactAppMenubar--menu-root) > ul.reactAppMenubar--menu--submenus {
+.reactAppMenubar--menu:not(.reactAppMenubar--menu-root) > .reactAppMenubar--menu--submenus {
   top: 0;
   left: 100%;
 }
 
-//----------Hover effects -------------------------------------------------
-// 1 When non root menu is hovered it should highlight
-// 2 And any submenus should be displayed
-.reactAppMenubar--menu:not(.reactAppMenubar--menu-root):not(.reactAppMenubar--menu-isDisabled):hover > .reactAppMenubar--menu--labelContainer {
-  background: $menu-hover-color;
-  color: white;
+// highlight menus on hover
+.reactAppMenubar--menu:hover:not(.reactAppMenubar--menu-root):not(.reactAppMenubar--menu-isDisabled) > .reactAppMenubar--menu--labelContainer {
+  background: $menu-background-hover;
+  color: $menu-text-hover;
 }
 
-.reactAppMenubar--menu:not(.reactAppMenubar--menu-root):not(.reactAppMenubar--menu-isDisabled):hover > .reactAppMenubar--menu--submenus {
-  display: block;
-}
-
-//End  Hover effects
-
-
-// ---------------Focus effects----------------------------
-// 1 When a menu is focussed, its submenus should be displayed
-// 2 (in supporting browsers) whenever a child/grandchild element is focussed, its submenus should be displayed
-.reactAppMenubar--menu:focus > .reactAppMenubar--menu--submenus {
-  display: block;
-}
-
+//when a menu is focussed, it submenus should be displayed
 .reactAppMenubar--menu:focus-within > .reactAppMenubar--menu--submenus {
   display: block;
 }
 
+//when a menu is hovered and the menubar is hoverable its submenus should be displayed
+.reactAppMenubar-isHoverable .reactAppMenubar--menu:hover:not(.reactAppMenubar--menu-root):not(.reactAppMenubar--menu-isDisabled) > .reactAppMenubar--menu--submenus {
+  display: block;
+  z-index: $menu-z-index + 1;
+}
+
+// when a menu or its submenus has focus, it's background should be changed
 .reactAppMenubar--menu:focus-within > .reactAppMenubar--menu--labelContainer {
-  background: $menu-focus-background;
-  color: $menu-focus-text;
+  background: $menu-background-focus;
 }
 
-.reactAppMenubar--menu-root:focus > .reactAppMenubar--menu--labelContainer {
-  background: $menu-focus-background;
-  color: $menu-focus-text;
-}
-
+// when a root menu or its submenus has focus, it should be diplayed in hovered color
 .reactAppMenubar--menu-root:focus-within > .reactAppMenubar--menu--labelContainer {
-  background: $menu-hover-color;
-  color: white;
+  background: $menu-background-hover;
+  color: $menu-text-hover;
 }
-
-//End Focus Effects
-
 
 // Gray out disabled items
 // not setting pointer-event: none so that focus is not lost when clicking a disabled item
-.reactAppMenubar--menu-isDisabled > .reactAppMenubar--menu--labelContainer,.reactAppMenubar--menu-isDisabled:focus > .reactAppMenubar--menu--labelContainer{
+.reactAppMenubar--menu-isDisabled > .reactAppMenubar--menu--labelContainer {
   opacity: .5;
 }
 
-
 //----------------- menu labels ------------------------------------------------
 .reactAppMenubar--menu--labelContainer {
-  position: relative;
   display: flex;
   align-items: center;
   white-space: nowrap;
+  position: relative;
+  cursor: default;
   padding: 4px 6px;
+}
+
+.reactAppMenubar--menu:not(.reactAppMenubar--menu-root) > .reactAppMenubar--menu--labelContainer {
   min-width: 150px;
 }
 
 .reactAppMenubar--menu--icon {
-  position: absolute;
   display: flex;
   align-items: center;
-  left: 6px
+  height: 16px;
+  width: 16px;
 }
+
+.reactAppMenubar--menu--icon-root {
+  height: 12px;
+  width: 12px;
+  margin-right: 4px;
+}
+
+.reactAppMenubar--menu--icon-left {
+  margin-right: 8px;
+}
+
+.reactAppMenubar--menu--icon-right {
+  margin-left: 8px;
+}
+
 
 .reactAppMenubar--menu--label {
-  margin-left: 24px;
+  flex-grow: 1;
+}
+
+.reactAppMenubar--menu:not(.reactAppMenubar--menu-root) > .reactAppMenubar--menu--labelContainer > .reactAppMenubar--menu--label {
+  //margin-left: 10px;
   margin-right: 20px;
-  flex: 1;
 }
 
-.reactAppMenubar--menu-root > .reactAppMenubar--menu--labelContainer{
-  margin: unset;
-  min-width: unset;
-}
-
-.reactAppMenubar--menu-root > .reactAppMenubar--menu--labelContainer >.reactAppMenubar--menu--label{
-  margin: unset;
+.reactAppMenubar--menu--label-em {
+  text-decoration: underline;
 }
 
 .reactAppMenubar--menu--hotKeys {
-  margin-left: 20px;
-  font-size: .9em;
+  margin-left: 2px;
+  font-size: .8em;
   margin-right: 2px;
+  font-style: oblique;
 }
-.reactAppMenubar--menu--hotKeys.reactAppMenubar--menu--hotKeys-disabled{
+
+.reactAppMenubar--menu--hotKeys-disabled {
   opacity: .4;
 }
-
-.reactAppMenubar--menu--expandIcon {
-  display: flex;
-  position: absolute;
-  right: 8px;
+.reactAppMenubar--menu--hotKeys-invisible {
+  opacity: 0 !important;
 }
 
-.focus {
-  text-decoration: underline;
-  //font-weight: bold;
-}
+@import "react-app-menu-ie-polyfill";

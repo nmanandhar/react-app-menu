@@ -2,10 +2,11 @@ import React, {ReactNode} from 'react';
 import {Menu} from './Menu';
 import {firstChildMenu, isRootMenu, lastChildMenu, nextMenu, nextRootMenu, parentMenu} from "../utils/menuTraversal";
 import {hotKeyString, isNotHotkey, Key} from "../utils/hotKeys";
-import {CLASS_MENUBAR} from "../utils/constants";
+import {MENUBAR, MENUBAR_HOVERABLE} from "../utils/classNames";
 import {MenuBarContext} from './MenubarContext';
 import {MdKeyboardArrowRight} from '../utils/icons/MdKeyboardArrowRight';
 import {FaCheck} from "../utils/icons/FaCheck";
+import {classNames} from "../utils/classNames";
 
 type HotKeyCallback = () => void;
 
@@ -16,6 +17,7 @@ type MenuBarProps = {
     expandIcon?: string | ReactNode;
     checkedIcon?: string | ReactNode;
     keyboard?: boolean;
+    openMenusOnHover?: boolean;
 }
 
 export class MenuBar extends React.PureComponent<MenuBarProps, {}> {
@@ -24,7 +26,8 @@ export class MenuBar extends React.PureComponent<MenuBarProps, {}> {
     static defaultProps = {
         checkedIcon: <FaCheck/>,
         expandIcon: <MdKeyboardArrowRight/>,
-        keyboard: true
+        keyboard: true,
+        openMenusOnHover: false
     };
 
     // a mapping of hotkeys to their callback functions
@@ -37,10 +40,10 @@ export class MenuBar extends React.PureComponent<MenuBarProps, {}> {
     }
 
     render() {
-        let barClassName = `${CLASS_MENUBAR}${this.props.className ? this.props.className : ''}`;
+        let barClassName = `${MENUBAR}${this.props.className ? this.props.className : ''}`;
 
         return <MenuBarContext.Provider value={this}>
-            <ul className={barClassName} onKeyDown={this.handleKeyboardNavigation}>
+            <ul className={classNames(MENUBAR,this.props.className,{[MENUBAR_HOVERABLE]:this.props.openMenusOnHover})} onKeyDown={this.handleKeyboardNavigation}>
                 {React.Children.map(this.props.children, (child) => {
                     // @ts-ignore
                     return React.cloneElement(child, {root: true});

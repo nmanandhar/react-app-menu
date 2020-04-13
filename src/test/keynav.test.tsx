@@ -2,7 +2,7 @@ import React from 'react';
 import {mount, ReactWrapper} from 'enzyme';
 import {Menu} from "../menu/Menu";
 import {MenuBar} from "../menu/MenuBar";
-import {CLASS_MENU, CLASS_MENU_LABEL, CLASS_MENUBAR} from "../utils/constants";
+import {MENU, LABEL, MENUBAR} from "../utils/classNames";
 import expect from 'expect';
 import {Key} from "../utils/hotKeys";
 import {Separator} from "../menu/Separator";
@@ -64,7 +64,7 @@ describe('Keyboard Navigation (Default props)', () => {
     });
 
     const key = (key: string): void => {
-        wrapper.find(`.${CLASS_MENUBAR}`).simulate('keyDown', {key});
+        wrapper.find(`.${MENUBAR}`).simulate('keyDown', {key});
     };
 
     describe('When top menu is active', () => {
@@ -243,8 +243,8 @@ describe('Keyboard Navigation (Default props)', () => {
  * Get the text of current active (focussed) menu
  */
 const activeMenu = () => {
-    if (document.activeElement && document.activeElement.classList.contains(CLASS_MENU)) {
-        let label = document.activeElement.querySelector(`.${CLASS_MENU_LABEL}`);
+    if (document.activeElement && document.activeElement.classList.contains(MENU)) {
+        let label = document.activeElement.querySelector(`.${LABEL}`);
         if (label) {
             return label.textContent;
         }

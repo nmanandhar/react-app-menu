@@ -1,0 +1,32 @@
+/**
+IE does not support .focus-within pseduo selector
+To get around the issue, we can include a polyfill for focus-within which adds a .focus-within classes as appropriate on browsers that don't support the selector
+See https://github.com/matteobad/focus-within-polyfill
+ */
+
+
+////when a menu is focussed, it submenus should be displayed
+.reactAppMenubar--menu:focus > .reactAppMenubar--menu--submenus {
+  display: block;
+}
+.reactAppMenubar--menu.focus-within > .reactAppMenubar--menu--submenus {
+  display: block;
+}
+
+// when a menu has focus, it's background should be changed
+.reactAppMenubar--menu:focus > .reactAppMenubar--menu--labelContainer {
+  background: $menu-background-focus;
+}
+.reactAppMenubar--menu.focus-within > .reactAppMenubar--menu--labelContainer{
+  background: $menu-background-focus;
+}
+
+// when a root menu or its submenus has focus, it should be diplayed in hovered color
+.reactAppMenubar--menu-root:focus > .reactAppMenubar--menu--labelContainer{
+  background: $menu-background-hover;
+  color: $menu-text-hover;
+}
+.reactAppMenubar--menu-root.focus-within > .reactAppMenubar--menu--labelContainer{
+  background: $menu-background-hover;
+  color: $menu-text-hover;
+}

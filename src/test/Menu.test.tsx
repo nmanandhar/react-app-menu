@@ -3,7 +3,7 @@ import expect from 'expect';
 import enzyme from 'enzyme';
 import {Menu} from "../menu/Menu";
 import {MenuBar} from "../menu/MenuBar";
-import {CLASS_MENU_ICON} from "../utils/constants";
+import {ICON} from "../utils/classNames";
 
 
 describe('Menu', () => {
@@ -27,11 +27,12 @@ describe('Menu', () => {
     describe('checked prop', () => {
         it('should render a checked icon when true', () => {
             let wrapper = enzyme.mount(<MenuBar checkedIcon={"☑"}>
-                <Menu label={'Test'} checked={true}/>
+                <Menu label={'Root'}>
+                    <Menu label={'Submenu'} checked={true}/>
+                </Menu>
             </MenuBar>);
             try {
-
-                let icon = wrapper.find(`.${CLASS_MENU_ICON}`);
+                let icon = wrapper.find(`.${ICON}`);
                 expect(icon.text()).toBe("☑");
             } finally {
                 wrapper.unmount();
@@ -39,10 +40,12 @@ describe('Menu', () => {
         });
         it('should have priority when both checked and icon props are set', () => {
             let wrapper = enzyme.mount(<MenuBar checkedIcon={"☑"}>
-                <Menu label={'Test'} checked={true} icon={"MyIcon"}/>
+                <Menu label={'RootMenu'}>
+                    <Menu label={'Submenu'} checked={true} icon={"MyIcon"}/>
+                </Menu>
             </MenuBar>);
             try {
-                let icon = wrapper.find(`.${CLASS_MENU_ICON}`);
+                let icon = wrapper.find(`.${ICON}`);
                 expect(icon.text()).toBe("☑");
             } finally {
                 wrapper.unmount();

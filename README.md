@@ -4,16 +4,17 @@
 ![BuildStatus](https://travis-ci.org/nmanandhar/react-app-menu.svg?branch=master)
 ![Dependencies](https://david-dm.org/nmanandhar/react-app-menu.svg)
 ![CodeCoverage](https://codecov.io/gh/nmanandhar/react-app-menu/branch/master/graphs/badge.svg?branch=master)
+[![Maintainability](https://api.codeclimate.com/v1/badges/eace77d971daafc7d6dc/maintainability)](https://codeclimate.com/github/nmanandhar/react-app-menu/maintainability)
 
 
 React App Menu is a simple React component that renders navigaton menu similar to desktop applications with support for hotkeys and keyboard navigation. This component 
 mainatins zero state and all styling and positioning is done through CSS leading to simple and extremely small component,
 
 ## Features
-Small (< 25 kb unminified)
-zero dependencies
-Trigger menu using keys
-Keyboard navigation
+1. Small (< 25 kb unminified)
+1. zero dependencies
+1. Trigger menu using keys
+1. Keyboard navigation
 
 ## Demo
 
@@ -24,7 +25,7 @@ Keyboard navigation
 npm i react-app-menu
 ```
 
-``` typescript jsx
+```tsx
 import {MenuBar,Menu,Separator} from 'react-app-menu';
 
 const App = () => (

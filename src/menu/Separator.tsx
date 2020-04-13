@@ -1,4 +1,4 @@
-import {CLASS_MENU_SEPARATOR} from "../utils/constants";
+import {MENU_SEPARATOR} from "../utils/classNames";
 import React from "react";
 
-export const Separator = () => <div className={CLASS_MENU_SEPARATOR}/>;
+export const Separator = () => <div className={MENU_SEPARATOR}/>;

@@ -1,13 +1,20 @@
 import React, {ReactNode} from "react";
 import {Key, normalizeKey} from "../utils/hotKeys";
-import {classNames} from "../utils/classNames";
 import {
-    CLASS_MENU, CLASS_MENU_DISABLED, CLASS_MENU_ROOT,
-    CLASS_MENU_LABEL_CONTAINER, CLASS_MENU_LABEL,
-    CLASS_MENU_ICON, CLASS_MENU_ICON_EXPAND,
-    CLASS_MENU_HOTKEY, CLASS_MENU_HOTKEY_DISABLED,
-    CLASS_MENU_SUBMENUS
-} from "../utils/constants";
+    classNames,
+    HOTKEY,
+    HOTKEY_DISABLED, HOTKEY_INVISIBLE,
+    ICON,
+    ICON_LEFT,
+    ICON_RIGHT, ICON_ROOT,
+    LABEL,
+    LABEL_CONTAINER,
+    LABEL_EM,
+    MENU,
+    MENU_DISABLED,
+    MENU_ROOT,
+    SUBMENUS
+} from "../utils/classNames";
 import {Separator} from "./Separator";
 import {MenuBarContext} from "./MenubarContext";
 
@@ -23,6 +30,7 @@ type MenuProps = {
     checked?: boolean;
     onSelect?: () => void,
     root?: boolean;
+    longestSubmenuHotKey?: string;
 }
 
 export class Menu extends React.PureComponent<MenuProps, any> {
@@ -50,33 +58,51 @@ export class Menu extends React.PureComponent<MenuProps, any> {
 
         let {disabled, checked, label, icon, hotKeys, focusKey, children, root} = this.props;
         let clickHandler = children || disabled ? undefined : this.handleMenuClick;
-        let className = classNames(CLASS_MENU, {[CLASS_MENU_DISABLED]: disabled, [CLASS_MENU_ROOT]: root});
+        let className = classNames(MENU, {[MENU_DISABLED]: disabled, [MENU_ROOT]: root});
+
+        let longestSubmenuHotKey: string | undefined = undefined;
+        if (!disabled) {
+            React.Children.toArray(this.props.children).forEach(child => {
+                let menuChild = (child as React.ReactElement<MenuProps>);
+                if (menuChild.props.hotKeys) {
+                    let hotKeyStr = menuChild.props.hotKeys.join('-');
+                    if (!longestSubmenuHotKey) {
+                        longestSubmenuHotKey = hotKeyStr;
+                    } else if (hotKeyStr.length > longestSubmenuHotKey.length) {
+                        longestSubmenuHotKey = hotKeyStr;
+                    }
+                }
+            });
+        }
+
+
 
         return (
-            <li ref={this.ref} tabIndex={root ? 0 : disabled ? undefined : -1} className={className}
-                onKeyDown={this.activateMenuOnEnter}>
-                <div className={CLASS_MENU_LABEL_CONTAINER} onClick={clickHandler}>
-                    {checked && <span className={CLASS_MENU_ICON}>{this.checkedIcon}</span>}
-                    {icon && checked !== true && <span className={CLASS_MENU_ICON}>{icon}</span>}
+            <li ref={this.ref} tabIndex={root ? 0 : disabled ? undefined : -1} onKeyDown={this.activateMenuOnEnter}
+                className={classNames(MENU, {[MENU_DISABLED]: disabled, [MENU_ROOT]: root})}>
+                <div className={LABEL_CONTAINER} onClick={clickHandler}>
+                    {root && icon && <span className={classNames(ICON, ICON_ROOT)}>{icon}</span>}
+                    {!root && <span className={classNames(ICON, ICON_LEFT)}>{checked ? this.checkedIcon : icon}</span>}
 
-                    <span className={CLASS_MENU_LABEL}>{
-                        focusKey && typeof label === "string" && label.includes(focusKey) ?
-                            <>
-                                <span>{label.substr(0, label.indexOf(focusKey))}</span>
-                                <span className={"focus"}>{focusKey}</span>
-                                <span>{label.substr(label.indexOf(focusKey) + 1)}</span>
-                            </>
-                            : label
+                    <span className={LABEL}>{focusKey && typeof label === "string" && label.includes(focusKey) ?
+                        <>
+                            <span>{label.substr(0, label.indexOf(focusKey))}</span>
+                            <span className={LABEL_EM}>{focusKey}</span>
+                            <span>{label.substr(label.indexOf(focusKey) + 1)}</span>
+                        </>
+                        : label
                     }</span>
 
-                    {hotKeys && <span className={this.hotKeyClasses()}>{hotKeys.join(' ')}</span>}
-                    {!root && children && <span className={CLASS_MENU_ICON_EXPAND}>{this.expandIcon}</span>}
+                    {hotKeys && !children && <span
+                        className={classNames(HOTKEY, {[HOTKEY_DISABLED]: this.hotKeyDisabled()})}>{hotKeys.join(' ')}</span>}
+                    {!root && !hotKeys && this.props.longestSubmenuHotKey && <span className={classNames(HOTKEY,HOTKEY_INVISIBLE )}>{this.props.longestSubmenuHotKey}</span>}
+
+                    {!root && children && <span className={classNames(ICON, ICON_RIGHT)}>{this.expandIcon}</span>}
                 </div>
-                {children && !disabled &&
-                <ul className={CLASS_MENU_SUBMENUS}>
-                    {children}
-                </ul>
-                }
+                {children && !disabled && <ul className={SUBMENUS}>{React.Children.map(this.props.children, (child) => {
+                    // @ts-ignore
+                    return React.cloneElement(child, {longestSubmenuHotKey});
+                })}</ul>}
             </li>);
     }
 
@@ -85,9 +111,13 @@ export class Menu extends React.PureComponent<MenuProps, any> {
     }
 
 
+    private hotKeyDisabled() {
+        return this.props.disabled || (!this.props.onSelect && (!this.props.hotKeys || !this.context?.props.onSelect));
+    }
+
     private hotKeyClasses() {
         let isHotKeyDisabled = this.props.disabled || (!this.props.onSelect && (!this.props.hotKeys || !this.context?.props.onSelect));
-        return classNames(CLASS_MENU_HOTKEY, {[CLASS_MENU_HOTKEY_DISABLED]: isHotKeyDisabled});
+        return classNames(HOTKEY, {[HOTKEY_DISABLED]: isHotKeyDisabled});
     }
 
     componentDidUpdate(prevProps: Readonly<MenuProps>, prevState: Readonly<any>, snapshot?: any): void {
