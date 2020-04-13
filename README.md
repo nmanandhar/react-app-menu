@@ -10,16 +10,18 @@
 - [Installation](#installation)
 - [Browser Support](#browser-support)
 - [Usage](#usage)
+- [Example](#example)
+- [Demo](#demo)
 - [Props](#props)
 	- [MenuBar](#menubar)
 	- [Menu](#menu)
 
 
-##Introduction
+## Introduction
 React App Menu is a simple React component that renders navigation menu similar to desktop applications with support for hotkeys and keyboard navigation.
 It aims to do most things through css alone and relies on javascript only when absolutely necessary
 
-##Installation
+## Installation
 ```npm
 npm install react-app-menu
 ```
@@ -38,88 +40,66 @@ events and adds a .focus-within class as necessary.
 
 
 ## Usage
-Simply import MenuBar and Menu and start composing your menu. A css is also provided in `dist/styles/react-app-menu.css`
-which you need to include for the menus to render properly.
+Simply import MenuBar and Menu and start composing your menu. A css is also provided in `dist/styles/react-app-menu.css`.
+**Be sure to import the css**
 
-![react-app-menu-demo](https://user-images.githubusercontent.com/9746042/79097656-fe5c4580-7d7f-11ea-983d-bfafda1c4da3.gif)
+## Example
 
 ```tsx
-import React from 'react';
+import React, {useState} from 'react';
 import {Keys, Menu, MenuBar, Separator} from 'react-app-menu';
 import {AiFillFolderOpen, FaPencilAlt, FaRegFile, FiBook, GoSearch, MdSettings} from "react-icons/all";
 import 'react-app-menu/dist/styles/react-app-menu.css'
 
+export const MenuBarDemo: React.FC = () => {
+    let [showToolbar, setShowToolbar] = useState(true);
+    let [showTooltip, setShowTooltip] = useState(false);
 
-type MenuBarDemoState = {
-    showToolbar: boolean;
-    showTooltips: boolean;
-}
-
-export class MenuBarDemo extends React.Component<any, MenuBarDemoState> {
-    constructor(props: any) {
-        super(props);
-        this.handleMenuSelect = this.handleMenuSelect.bind(this);
-        this.onNewFolderSelect = this.onNewFolderSelect.bind(this);
-        this.state = {
-            showToolbar: true,
-            showTooltips: false
-        }
-    }
-
-    render() {
-        return (
-            <>
-                <div style={{background: '#FBFBFB', borderBottom: '1px solid rgb(218, 220, 224)'}}>
-                    <MenuBar onSelect={this.handleMenuSelect}>
-                        <Menu label='File' focusKey={"F"}>
-                            <Menu label='New'>
-                                <Menu menuId='NewNotebook' label='Notebook' icon={<FiBook/>}/>
-                                <Menu menuId="NewNote" label='Note' icon={<FaRegFile/>} hotKeys={Keys.ctrlAlt('N')}/>
-                                <Separator/>
-                                <Menu label="Folder" icon={<AiFillFolderOpen/>} hotKeys={Keys.ctrlAlt("F")}
-                                      onSelect={this.onNewFolderSelect}/>
-                            </Menu>
-                            <Menu label='Settings' icon={<MdSettings/>} hotKeys={Keys.altShift("S")}/>
-                        </Menu>
-                        <Menu label='Edit' focusKey='E'>
-                            <Menu menuId='search' label='Search' icon={<GoSearch/>} hotKeys={Keys.ctrlShift('F')}/>
-                            <Menu menuId='undo' label='Undo' hotKeys={Keys.ctrl('Z')}/>
-                            <Menu menuId='rename' label='Rename' icon={<FaPencilAlt/>} hotKeys={Keys.shift('F6')}/>
-                        </Menu>
-                        <Menu label='View' focusKey='V'>
-                            <Menu menuId='toolbar' label='Toolbars' checked={this.state.showToolbar}
-                                  hotKeys={Keys.ctrlAlt("T")}/>
-                            <Menu menuId='statusBar' label='StatusBar'/>
-                            <Menu menuId='toolTips' label='Tooltips' checked={this.state.showTooltips}
-                                  hotKeys={Keys.ctrlAltShift("T")}/>
-                        </Menu>
-                    </MenuBar>
-                </div>
-            </>
-        );
-    }
-
-    handleMenuSelect(menuId: string): void {
+    const handleMenuSelect = (menuId: string): void => {
         switch (menuId) {
             case 'toolbar':
-                this.setState((oldState) => {
-                    return {showToolbar: !oldState.showToolbar}
-                });
-                break;
+                return setShowToolbar(!showToolbar);
             case 'toolTips':
-                this.setState((oldState) => {
-                    return {showTooltips: !oldState.showTooltips}
-                });
+                return setShowTooltip(!showTooltip);
             default:
                 console.log(`menu selected ${menuId}`)
         }
-    }
+    };
 
-    onNewFolderSelect(): void {
-        console.log('New Folder !!!');
-    }
-}
+    const onFolderSelect = (): void => {
+        console.log('Folder selected');
+    };
+
+    return (<div style={{background: '#FBFBFB', borderBottom: '1px solid rgb(218, 220, 224)'}}>
+        <MenuBar onSelect={handleMenuSelect}>
+            <Menu label='File' focusKey={"F"}>
+                <Menu label='New'>
+                    <Menu menuId='NewNotebook' label='Notebook' icon={<FiBook/>}/>
+                    <Menu menuId="NewNote" label='Note' icon={<FaRegFile/>} hotKeys={Keys.ctrlAlt('N')}/>
+                    <Separator/>
+                    <Menu label="Folder" icon={<AiFillFolderOpen/>} hotKeys={Keys.ctrlAlt("F")}
+                          onSelect={onFolderSelect}/>
+                </Menu>
+                <Menu label='Settings' icon={<MdSettings/>} hotKeys={Keys.altShift("S")}/>
+            </Menu>
+            <Menu label='Edit' focusKey='E'>
+                <Menu menuId='search' label='Search' icon={<GoSearch/>} hotKeys={Keys.ctrlShift('F')}/>
+                <Menu menuId='undo' label='Undo' hotKeys={Keys.ctrl('Z')}/>
+                <Menu menuId='rename' label='Rename' icon={<FaPencilAlt/>} hotKeys={Keys.shift('F6')}/>
+            </Menu>
+            <Menu label='View' focusKey='V'>
+                <Menu menuId='toolbar' label='Toolbars' checked={showToolbar} hotKeys={Keys.ctrlAlt("T")}/>
+                <Menu menuId='statusBar' label='StatusBar'/>
+                <Menu menuId='toolTips' label='Tooltips' checked={showTooltip} hotKeys={Keys.ctrlAltShift("T")}/>
+            </Menu>
+        </MenuBar>
+    </div>);
+};
 ```
+
+## Demo
+![react-app-menu-demo](https://user-images.githubusercontent.com/9746042/79097656-fe5c4580-7d7f-11ea-983d-bfafda1c4da3.gif)
+
 
 ## Props
 
