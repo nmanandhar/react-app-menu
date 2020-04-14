@@ -1,6 +1,6 @@
 {
   "name": "react-app-menu",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "a tiny react component to build desktop like menu with keyboard navigation and hotkeys support",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
