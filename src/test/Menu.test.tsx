@@ -1,8 +1,7 @@
 import React from 'react';
 import expect from 'expect';
 import enzyme from 'enzyme';
-import {Menu} from "../menu/Menu";
-import {MenuBar} from "../menu/MenuBar";
+import {Menu, MenuBar} from "..";
 import {ICON} from "../utils/classNames";
 
 

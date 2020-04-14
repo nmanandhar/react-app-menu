@@ -1,11 +1,9 @@
 import React, {ReactElement} from 'react';
 import {mount, ReactWrapper} from 'enzyme';
-import {Menu} from '../menu/Menu';
-import {MenuBar} from '../menu/MenuBar';
+import {Menu,MenuBar,Keys} from '..';
 import sinon, {SinonSpy} from 'sinon';
 import expect from 'expect';
 import {HOTKEY, HOTKEY_DISABLED} from "../utils/classNames";
-import {Keys} from "../utils/Keys";
 
 type AppProps = { disableMenu: boolean };
 
@@ -46,7 +44,7 @@ describe('HotKeys', () => {
     };
 
     it('should not trigger hotkeys when keyboard props is set to false', () => {
-        mountComponent(<MenuBar keyboard={false}>
+        mountComponent(<MenuBar enableHotKeys={false}>
             <Menu label={'Open File'} hotKeys={["Ctrl", "O"]} onSelect={menuCallback}/>
         </MenuBar>);
 

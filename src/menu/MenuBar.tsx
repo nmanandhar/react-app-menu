@@ -1,13 +1,9 @@
-import React, {ReactNode} from 'react';
-import {Menu} from './Menu';
+import React, {ReactNode, useCallback, useEffect, useState} from 'react';
 import {firstChildMenu, isRootMenu, lastChildMenu, nextMenu, nextRootMenu, parentMenu} from "../utils/menuTraversal";
 import {hotKeyString, isNotHotkey, Key} from "../utils/hotKeys";
-import {MENUBAR, MENUBAR_HOVERABLE} from "../utils/classNames";
-import {MenuBarContext} from './MenubarContext';
-import {MdKeyboardArrowRight} from '../utils/icons/MdKeyboardArrowRight';
-import {classNames} from "../utils/classNames";
+import {classNames, MENUBAR, MENUBAR_HOVERABLE} from "../utils/classNames";
+import {Callback, IMenubarContext, MenuBarContext} from "./MenubarContext";
 
-type HotKeyCallback = () => void;
 
 
 type MenuBarProps = {
@@ -15,99 +11,78 @@ type MenuBarProps = {
     className?: string;
     expandIcon?: string | ReactNode;
     checkedIcon?: string | ReactNode;
-    hotkeys?: boolean;
+    enableHotKeys?: boolean;
     openMenusOnHover?: boolean;
 }
+export const MenuBar: React.FC<MenuBarProps> = ({onSelect, expandIcon = "⮞", checkedIcon = "✔", enableHotKeys = true, openMenusOnHover = false, className, children}) => {
+    const [callbacks] = useState<{ [key: string]: Callback }>({});
 
-export class MenuBar extends React.PureComponent<MenuBarProps, {}> {
-    static Menu = Menu;
+    const registerHotKey = useCallback((hotkey: string, callback: Callback): void => {
+        callbacks[hotkey] = callback;
+    }, []);
 
-    static defaultProps = {
-        checkedIcon: "✔",
-        expandIcon: <MdKeyboardArrowRight/>,
-        keyboard: true,
-        hotkeys: true,
-        openMenusOnHover: false
-    };
+    const unregisterHotKey = useCallback((hotkey: string): void => {
+        delete callbacks[hotkey];
+    }, []);
 
-    // a mapping of hotkeys to their callback functions
-    hotkeyCallbacks: { [key: string]: HotKeyCallback } = {};
 
-    constructor(props: MenuBarProps) {
-        super(props);
-        this.handleKeyboardNavigation = this.handleKeyboardNavigation.bind(this);
-        this.handleHotKeys = this.handleHotKeys.bind(this);
-    }
-
-    render() {
-        let barClassName = `${MENUBAR}${this.props.className ? this.props.className : ''}`;
-
-        return <MenuBarContext.Provider value={this}>
-            <ul className={classNames(MENUBAR,this.props.className,{[MENUBAR_HOVERABLE]:this.props.openMenusOnHover})} onKeyDown={this.handleKeyboardNavigation}>
-                {React.Children.map(this.props.children, (child) => {
-                    // @ts-ignore
-                    return React.cloneElement(child, {root: true});
-                })}
-            </ul>
-        </MenuBarContext.Provider>;
-    }
-
-    componentDidMount(): void {
-        if (this.props.hotkeys) {
-            document.addEventListener('keydown', this.handleHotKeys);
-        }
-    }
-
-    componentWillUnmount(): void {
-        document.removeEventListener('keydown', this.handleHotKeys);
-    }
-
-    handleKeyboardNavigation(event: React.KeyboardEvent) {
-        let currentMenu = document.activeElement;
-        let nextFocusElement: Element | null = null;
-
-        if (event.key === Key.ESC) {
-            (document.activeElement as HTMLElement).blur();
-        } else if (event.key === Key.DOWN) {
-            nextFocusElement = isRootMenu(currentMenu) ? firstChildMenu(currentMenu) : nextMenu(currentMenu, 'DOWN');
-        } else if (event.key === Key.UP) {
-            nextFocusElement = isRootMenu(currentMenu) ? lastChildMenu(currentMenu) : nextMenu(currentMenu, 'UP');
-        } else if (event.key === Key.RIGHT) {
-            let childMenu = firstChildMenu(currentMenu);
-            nextFocusElement = isRootMenu(currentMenu) || !childMenu ? nextRootMenu(currentMenu, 'RIGHT') : childMenu;
-        } else if (event.key === Key.LEFT) {
-            let parent = parentMenu(currentMenu);
-            nextFocusElement = isRootMenu(parent) || !parent ? nextRootMenu(currentMenu, 'LEFT') : parent;
-        }
-
-        (nextFocusElement as HTMLLIElement)?.focus();
-    }
-
-    handleHotKeys(event: KeyboardEvent): void {
-        if (isNotHotkey(event)) {
-            return;
-        }
-        const hotKey = hotKeyString(event);
-        if (this.hotkeyCallbacks[hotKey]) {
-            event.stopPropagation();
-            event.preventDefault();
-            this.hotkeyCallbacks[hotKey]();
-        }
-    };
-
-    registerCallback(hotKey: string, callback: HotKeyCallback) {
-        this.hotkeyCallbacks[hotKey] = callback;
-    }
-
-    registerMenuId(hotKey: string, menuId: string) {
-        this.hotkeyCallbacks[hotKey] = () => {
-            if (this.props.onSelect) {
-                this.props.onSelect(menuId);
+    useEffect(() => {
+        let hotKeyHandler = (event: KeyboardEvent): void => {
+            if (isNotHotkey(event)) {
+                return;
+            }
+            const normalizedHotkey = hotKeyString(event);
+            if (callbacks[normalizedHotkey]) {
+                event.stopPropagation();
+                event.preventDefault();
+                callbacks[normalizedHotkey]();
             }
         };
+        if (enableHotKeys) {
+            document.addEventListener('keydown', hotKeyHandler);
+        }
+        return () => {
+            document.removeEventListener('keydown', hotKeyHandler);
+        }
+    }, []);
+
+
+    const menubarContext: IMenubarContext = {
+        onSelect,
+        expandIcon,
+        checkedIcon,
+        hotKeysEnabled: enableHotKeys,
+        registerHotKey,
+        unregisterHotKey
+    };
+
+    // console.log(children);
+    return <MenuBarContext.Provider value={menubarContext}>
+        <ul className={classNames(MENUBAR, className, {[MENUBAR_HOVERABLE]: openMenusOnHover})}
+            onKeyDown={handleKeyNavigation}>
+            {children}
+        </ul>
+    </MenuBarContext.Provider>;
+};
+
+
+const handleKeyNavigation = (event: React.KeyboardEvent) => {
+    let currentMenu = document.activeElement;
+    let nextFocusElement: Element | null = null;
+
+    if (event.key === Key.ESC) {
+        (document.activeElement as HTMLElement).blur();
+    } else if (event.key === Key.DOWN) {
+        nextFocusElement = isRootMenu(currentMenu) ? firstChildMenu(currentMenu) : nextMenu(currentMenu, 'DOWN');
+    } else if (event.key === Key.UP) {
+        nextFocusElement = isRootMenu(currentMenu) ? lastChildMenu(currentMenu) : nextMenu(currentMenu, 'UP');
+    } else if (event.key === Key.RIGHT) {
+        let childMenu = firstChildMenu(currentMenu);
+        nextFocusElement = isRootMenu(currentMenu) || !childMenu ? nextRootMenu(currentMenu, 'RIGHT') : childMenu;
+    } else if (event.key === Key.LEFT) {
+        let parent = parentMenu(currentMenu);
+        nextFocusElement = isRootMenu(parent) || !parent ? nextRootMenu(currentMenu, 'LEFT') : parent;
     }
 
-    unregister(key: string) {
-        delete this.hotkeyCallbacks[key];
-    }
-}
+    (nextFocusElement as HTMLLIElement)?.focus();
+};

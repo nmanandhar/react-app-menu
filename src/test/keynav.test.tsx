@@ -1,12 +1,9 @@
 import React from 'react';
 import {mount, ReactWrapper} from 'enzyme';
-import {Menu} from "../menu/Menu";
-import {MenuBar} from "../menu/MenuBar";
+import {Menu, MenuBar, Separator} from "..";
 import {MENU, LABEL, MENUBAR} from "../utils/classNames";
 import expect from 'expect';
 import {Key} from "../utils/hotKeys";
-import {Separator} from "../menu/Separator";
-
 
 /**
  *  Menu for testing keyboard navigation
