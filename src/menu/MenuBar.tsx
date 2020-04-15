@@ -1,9 +1,8 @@
-import React, {ReactNode, useCallback, useEffect, useState} from 'react';
+import React, {ReactNode, useEffect, useMemo, useState} from 'react';
 import {firstChildMenu, isRootMenu, lastChildMenu, nextMenu, nextRootMenu, parentMenu} from "../utils/menuTraversal";
 import {hotKeyString, isNotHotkey, Key} from "../utils/hotKeys";
 import {classNames, MENUBAR, MENUBAR_HOVERABLE} from "../utils/classNames";
 import {Callback, IMenubarContext, MenuBarContext} from "./MenubarContext";
-
 
 
 type MenuBarProps = {
@@ -16,15 +15,6 @@ type MenuBarProps = {
 }
 export const MenuBar: React.FC<MenuBarProps> = ({onSelect, expandIcon = "⮞", checkedIcon = "✔", enableHotKeys = true, openMenusOnHover = false, className, children}) => {
     const [callbacks] = useState<{ [key: string]: Callback }>({});
-
-    const registerHotKey = useCallback((hotkey: string, callback: Callback): void => {
-        callbacks[hotkey] = callback;
-    }, []);
-
-    const unregisterHotKey = useCallback((hotkey: string): void => {
-        delete callbacks[hotkey];
-    }, []);
-
 
     useEffect(() => {
         let hotKeyHandler = (event: KeyboardEvent): void => {
@@ -44,19 +34,23 @@ export const MenuBar: React.FC<MenuBarProps> = ({onSelect, expandIcon = "⮞", c
         return () => {
             document.removeEventListener('keydown', hotKeyHandler);
         }
-    }, []);
+    }, [enableHotKeys, callbacks]);
 
 
-    const menubarContext: IMenubarContext = {
-        onSelect,
-        expandIcon,
-        checkedIcon,
-        hotKeysEnabled: enableHotKeys,
-        registerHotKey,
-        unregisterHotKey
-    };
+    const menubarContext: IMenubarContext = useMemo(() => ({
+            onSelect,
+            expandIcon,
+            checkedIcon,
+            hotKeysEnabled: enableHotKeys,
+            registerHotKey: (hotkey: string, callback: Callback): void => {
+                callbacks[hotkey] = callback;
+            },
+            unregisterHotKey: (hotkey: string): void => {
+                delete callbacks[hotkey];
+            }
+        }
+    ), [checkedIcon, expandIcon, enableHotKeys, onSelect, callbacks]);
 
-    // console.log(children);
     return <MenuBarContext.Provider value={menubarContext}>
         <ul className={classNames(MENUBAR, className, {[MENUBAR_HOVERABLE]: openMenusOnHover})}
             onKeyDown={handleKeyNavigation}>
