@@ -48,5 +48,5 @@ export const normalizeKey = (hotKeys: string[]): string | null => {
     if (keys.length !== 1) {
         return null;
     }
-    return [...modifierKeys, keys[0]].join('-');
+    return [...modifierKeys, keys[0]].join(' + ');
 };

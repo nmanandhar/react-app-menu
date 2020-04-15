@@ -28,7 +28,7 @@ export const Menu: React.FC<MenuProps> = ({onSelect, menuId, label, icon, hotKey
     const ref = useRef<HTMLLIElement>(null);
 
 
-    const isHotkeyDisabled = !menuBarContext?.hotKeysEnabled || disabled || !show || (!onSelect && (!hotKeys || !menuBarContext?.onSelect));
+    const isHotkeyDisabled = !menuBarContext?.hotKeysEnabled || children || disabled || !show || (!onSelect && (!hotKeys || !menuBarContext?.onSelect));
 
     const hotKey = isHotkeyDisabled || !hotKeys ? null : normalizeKey(hotKeys);
 
@@ -92,11 +92,9 @@ export const Menu: React.FC<MenuProps> = ({onSelect, menuId, label, icon, hotKey
               : label}
         </span>
 
-                {hotKeys && !children
-                &&
-                <span className={classNames(HOTKEY, {[HOTKEY_DISABLED]: isHotkeyDisabled})}>{hotKeys.join(' ')}</span>}
-                {!isRootMenu && !hotKeys && longestHotkeyInSiblingMenus
-                && <span className={classNames(HOTKEY, HOTKEY_INVISIBLE)}>{longestHotkeyInSiblingMenus}</span>}
+                {hotKeys && !children && <span className={classNames(HOTKEY, {[HOTKEY_DISABLED]: isHotkeyDisabled})}>{normalizeKey(hotKeys)}</span>}
+                {!isRootMenu && !hotKeys && longestHotkeyInSiblingMenus &&
+                <span className={classNames(HOTKEY, HOTKEY_INVISIBLE)}>{longestHotkeyInSiblingMenus}</span>}
                 {!isRootMenu && children
                 && <span className={classNames(ICON, ICON_RIGHT)}>{menuBarContext?.expandIcon}</span>}
             </div>
