@@ -11,22 +11,34 @@ export enum Key {
 }
 
 
-export const isNotHotkey = (event: KeyboardEvent): boolean => {
+/**
+ * Returns true if the keypress is a combination of modifier key (ctrl alt shift ) and any other key
+ * @param event KeyboardEvent
+ */
+const isHotKey = (event: KeyboardEvent): boolean => {
     if (event.key === "Control" || event.key === "Alt" || event.key === "Shift") {
-        return true; //it's not hot key when user just presses the modifiers
+        return false; //it's not hot key when user just presses the modifiers
     } else if (!event.altKey && !event.ctrlKey && !event.shiftKey) {
-        return true; //and it's not hot key either when no modifiers are pressed
+        return false; //and it's not hot key either when no modifiers are pressed
     }
-    return false; //could be  a hotkey
+    return true; //could be  a hotkey
 };
 
-export const hotKeyString = (event: KeyboardEvent) => {
-    let hotKeys = [];
-    event.ctrlKey && hotKeys.push("ctrl");
-    event.altKey && hotKeys.push("alt");
-    event.shiftKey && hotKeys.push("shift");
-    hotKeys.push(event.key.toLowerCase());
-    return hotKeys.join("-");
+/**
+ * returns an array containing key pressed along with modifiers
+ * returns null if the key itself is a modifier or no modifiers was present
+ * @param event
+ */
+export const keyWithModifiers = (event: KeyboardEvent): string[] | null => {
+    if (isHotKey(event)) {
+        let keys = [];
+        event.ctrlKey && keys.push("ctrl");
+        event.altKey && keys.push("alt");
+        event.shiftKey && keys.push("shift");
+        keys.push(event.key);
+        return keys;
+    }
+    return null;
 };
 
 /**
@@ -48,5 +60,5 @@ export const normalizeKey = (hotKeys: string[]): string | null => {
     if (keys.length !== 1) {
         return null;
     }
-    return [...modifierKeys, keys[0]].join(' + ');
+    return [...modifierKeys, keys[0]].join('+');
 };

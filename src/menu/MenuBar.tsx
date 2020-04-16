@@ -1,6 +1,6 @@
 import React, {ReactNode, useEffect, useMemo, useState} from 'react';
 import {firstChildMenu, isRootMenu, lastChildMenu, nextMenu, nextRootMenu, parentMenu} from "../utils/menuTraversal";
-import {hotKeyString, isNotHotkey, Key} from "../utils/hotKeys";
+import {Key, keyWithModifiers, normalizeKey} from "../utils/hotKeys";
 import {classNames, MENUBAR, MENUBAR_HOVERABLE} from "../utils/classNames";
 import {Callback, IMenubarContext, MenuBarContext} from "./MenubarContext";
 
@@ -17,15 +17,16 @@ export const MenuBar: React.FC<MenuBarProps> = ({onSelect, expandIcon = "⮞", c
     const [callbacks] = useState<{ [key: string]: Callback }>({});
 
     useEffect(() => {
-        let hotKeyHandler = (event: KeyboardEvent): void => {
-            if (isNotHotkey(event)) {
-                return;
-            }
-            const normalizedHotkey = hotKeyString(event);
-            if (callbacks[normalizedHotkey]) {
-                event.stopPropagation();
-                event.preventDefault();
-                callbacks[normalizedHotkey]();
+        const hotKeyHandler = (keyboardEvent: KeyboardEvent): void => {
+            let hotKeyPressed = keyWithModifiers(keyboardEvent);
+            if (hotKeyPressed) {
+                let key = normalizeKey(hotKeyPressed);
+                if (key && callbacks[key]) {
+                    keyboardEvent.stopPropagation();
+                    keyboardEvent.preventDefault();
+                    const callback = callbacks[key];
+                    callback();
+                }
             }
         };
         if (enableHotKeys) {
@@ -37,26 +38,37 @@ export const MenuBar: React.FC<MenuBarProps> = ({onSelect, expandIcon = "⮞", c
     }, [enableHotKeys, callbacks]);
 
 
-    const menubarContext: IMenubarContext = useMemo(() => ({
+    const context: IMenubarContext = useMemo(() => ({
             onSelect,
             expandIcon,
             checkedIcon,
             hotKeysEnabled: enableHotKeys,
-            registerHotKey: (hotkey: string, callback: Callback): void => {
-                callbacks[hotkey] = callback;
+            registerHotKey: (hotkey: Array<string>, callback: Callback): void => {
+                let key = normalizeKey(hotkey);
+                if (key) {
+                    if (callbacks[key]) {
+                        console.warn(`Duplicate hotkey ${key}. One of your hotkeys might not trigger`);
+                    }
+                    callbacks[key] = callback;
+                }
             },
-            unregisterHotKey: (hotkey: string): void => {
-                delete callbacks[hotkey];
+            unregisterHotKey: (hotkey: Array<string>): void => {
+                let key = normalizeKey(hotkey);
+                if (key) {
+                    delete callbacks[key];
+                }
             }
         }
     ), [checkedIcon, expandIcon, enableHotKeys, onSelect, callbacks]);
 
-    return <MenuBarContext.Provider value={menubarContext}>
+    return (
         <ul className={classNames(MENUBAR, className, {[MENUBAR_HOVERABLE]: openMenusOnHover})}
             onKeyDown={handleKeyNavigation}>
-            {children}
+            <MenuBarContext.Provider value={context}>
+                {children}
+            </MenuBarContext.Provider>
         </ul>
-    </MenuBarContext.Provider>;
+    );
 };
 
 

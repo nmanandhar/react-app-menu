@@ -1,6 +1,8 @@
 import React, {ReactElement} from 'react';
 import {mount, ReactWrapper} from 'enzyme';
-import {Menu,MenuBar,Keys} from '..';
+import {Menu} from '../menu/Menu'
+import {MenuBar} from '../menu/MenuBar'
+import {Keys} from '../utils/Keys'
 import sinon, {SinonSpy} from 'sinon';
 import expect from 'expect';
 import {HOTKEY, HOTKEY_DISABLED} from "../utils/classNames";
@@ -32,20 +34,20 @@ describe('HotKeys', () => {
     });
 
     const expectHotkeyToBeDisabled = () => {
-        expect(wrapper.contains(<span className={`${HOTKEY}`}>Ctrl O</span>)).toBe(false);
-        expect(wrapper.contains(<span className={`${HOTKEY} ${HOTKEY_DISABLED}`}>Ctrl O</span>))
+        expect(wrapper.contains(<span className={`${HOTKEY}`}>Ctrl+o</span>)).toBe(false);
+        expect(wrapper.contains(<span className={`${HOTKEY} ${HOTKEY_DISABLED}`}>Ctrl+o</span>))
             .toBe(true);
     };
 
     const expectHotkeyToBeEnabled = () => {
-        expect(wrapper.contains(<span className={`${HOTKEY}`}>Ctrl O</span>)).toBe(true);
-        expect(wrapper.contains(<span className={`${HOTKEY} ${HOTKEY_DISABLED}`}>Ctrl O</span>))
+        expect(wrapper.contains(<span className={`${HOTKEY}`}>Ctrl+o</span>)).toBe(true);
+        expect(wrapper.contains(<span className={`${HOTKEY} ${HOTKEY_DISABLED}`}>Ctrl+o</span>))
             .toBe(false);
     };
 
     it('should not trigger hotkeys when keyboard props is set to false', () => {
         mountComponent(<MenuBar enableHotKeys={false}>
-            <Menu label={'Open File'} hotKeys={["Ctrl", "O"]} onSelect={menuCallback}/>
+            <Menu label={'Open File'} hotKeys={Keys.ctrl("o")} onSelect={menuCallback}/>
         </MenuBar>);
 
         triggerHotKey();
@@ -54,7 +56,9 @@ describe('HotKeys', () => {
 
     it('should invoke onSelect prop of Menu when triggered', function () {
         mountComponent(<MenuBar>
-            <Menu label={'Open File'} hotKeys={["Ctrl", "O"]} onSelect={menuCallback}/>
+            <Menu label={'File'}>
+                <Menu label={'Open File'} hotKeys={Keys.ctrl("o")} onSelect={menuCallback}/>
+            </Menu>
         </MenuBar>);
 
         sinon.assert.notCalled(menubarCallback);
@@ -62,11 +66,12 @@ describe('HotKeys', () => {
         sinon.assert.calledOnce(menuCallback);
     });
 
-    it('should invoke the onSelect prop of MenuBar if onSelect if menu has no onSelect prop', () => {
+    it('should invoke the onSelect prop of MenuBar if menu has no onSelect prop', () => {
         mountComponent(<MenuBar onSelect={menubarCallback}>
-            <Menu menuId={'menuIdOpenFile'} label={'Open File'} hotKeys={["Ctrl", "O"]}/>
+            <Menu label={'File'}>
+                <Menu menuId={'menuIdOpenFile'} label={'Open File'} hotKeys={Keys.ctrl("o")}/>
+            </Menu>
         </MenuBar>);
-
         expectHotkeyToBeEnabled();
         triggerHotKey();
 
@@ -77,19 +82,21 @@ describe('HotKeys', () => {
     it('should show hotkey as disabled when no callbacks can be registered', () => {
         mountComponent(
             <MenuBar>
-                <Menu label={'Open File'} hotKeys={["Ctrl", "O"]}/>
+                <Menu label={'File'}>
+                    <Menu label={'Open File'} hotKeys={Keys.ctrl("o")}/>
+                </Menu>
             </MenuBar>
         );
-
         expectHotkeyToBeDisabled();
-
     });
 
 
     it('should not be invoked for disabled menus', () => {
         mountComponent(
             <MenuBar>
-                <Menu disabled={true} label={'Open File'} hotKeys={["Ctrl", "O"]} onSelect={menuCallback}/>
+                <Menu label={'File'}>
+                    <Menu disabled={true} label={'Open File'} hotKeys={Keys.ctrl("o")} onSelect={menuCallback}/>
+                </Menu>
             </MenuBar>
         );
 
@@ -101,11 +108,15 @@ describe('HotKeys', () => {
         sinon.assert.notCalled(menubarCallback);
     });
 
+
     it('should not be invoked after menu transitions to disabled state', () => {
         type AppProps = { disableMenu: boolean };
         const TestApp: React.FC<AppProps> = ({disableMenu}) => (
             <MenuBar>
-                <Menu disabled={disableMenu} label={'Open File'} hotKeys={["Ctrl", "O"]} onSelect={menubarCallback}/>
+                <Menu label={'File'}>
+                    <Menu disabled={disableMenu} label={'Open File'} hotKeys={Keys.ctrl("o")}
+                          onSelect={menubarCallback}/>
+                </Menu>
             </MenuBar>
         );
 
@@ -130,7 +141,10 @@ describe('HotKeys', () => {
 
         const TestApp: React.FC<AppProps> = ({disableMenu}) => (
             <MenuBar>
-                <Menu disabled={disableMenu} label={'Open File'} hotKeys={["Ctrl", "O"]} onSelect={menubarCallback}/>
+                <Menu label={'File'}>
+                    <Menu disabled={disableMenu} label={'Open File'} hotKeys={Keys.ctrl("o")}
+                          onSelect={menubarCallback}/>
+                </Menu>
             </MenuBar>
         );
 
@@ -153,7 +167,9 @@ describe('HotKeys', () => {
 
         const TestApp = ({hotKeys}: { hotKeys: string[] }) => (
             <MenuBar>
-                <Menu label={'Open File'} hotKeys={hotKeys} onSelect={menubarCallback}/>
+                <Menu label={'File'}>
+                    <Menu label={'Open File'} hotKeys={hotKeys} onSelect={menubarCallback}/>
+                </Menu>
             </MenuBar>
         );
 
@@ -175,7 +191,9 @@ describe('HotKeys', () => {
     it('should not be invoked after MenuBar is unmounted', () => {
 
         mountComponent(<MenuBar>
-            <Menu label={'Open File'} hotKeys={["Ctrl", "O"]} onSelect={menubarCallback}/>
+            <Menu label={'File'}>
+                <Menu label={'Open File'} hotKeys={Keys.ctrl("o")} onSelect={menubarCallback}/>
+            </Menu>
         </MenuBar>);
 
         triggerHotKey();

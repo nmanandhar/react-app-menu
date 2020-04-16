@@ -7,8 +7,8 @@ export interface IMenubarContext {
     expandIcon: string | ReactNode;
     checkedIcon: string | ReactNode;
     hotKeysEnabled: boolean;
-    registerHotKey: (hotKey: string, callback: Callback) => void
-    unregisterHotKey: (hotKey: string) => void
+    registerHotKey: (hotKey: string[], callback: Callback) => void
+    unregisterHotKey: (hotKey: string[]) => void
 }
 
 export const MenuBarContext = React.createContext<IMenubarContext | null>(null);
