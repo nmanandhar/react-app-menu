@@ -95,7 +95,7 @@ export const Menu: React.FC<MenuProps> = ({onSelect, menuId, label, icon, hotKey
             } else if (menuId && menuBar.onSelect) {
                 menuBar.onSelect(menuId);
             } else {
-                console.log(`No handlers found for menu ${label}`);
+                console.warn(`No handlers found for menu ${label}`);
             }
         };
         const hotKeysEnabled = menuBar.hotKeysEnabled;

@@ -1,9 +1,10 @@
 import React from 'react';
-import {mount, ReactWrapper} from 'enzyme';
 import {Menu, MenuBar, Separator} from "..";
-import {MENU, LABEL, MENUBAR} from "../utils/classNames";
+import {MENUBAR} from "../utils/classNames";
 import expect from 'expect';
 import {Key} from "../utils/hotKeys";
+import {activeMenu, cleanUp, mount, selectorRootMenu, selectorSubMenu, tryFocus} from "./testUtils";
+import {ReactWrapper} from "enzyme";
 
 /**
  *  Menu for testing keyboard navigation
@@ -55,9 +56,7 @@ describe('Keyboard Navigation (Default props)', () => {
     });
 
     afterEach(() => {
-        if (wrapper) {
-            wrapper.unmount();
-        }
+        cleanUp();
     });
 
     const key = (key: string): void => {
@@ -254,62 +253,39 @@ describe('Keyboard Navigation (Default props)', () => {
 });
 
 /**
- * Get the text of current active (focussed) menu
- */
-const activeMenu = () => {
-    if (document.activeElement && document.activeElement.classList.contains(MENU)) {
-        let label = document.activeElement.querySelector(`.${LABEL}`);
-        if (label) {
-            return label.textContent;
-        }
-    }
-    return null;
-};
-
-/**
  * Activate (focus) the menu with the provided menu
  */
 const focusOnMenu = (menu: string) => {
-    let el = document.querySelector(_selector(menu));
-    if (el) {
-        (el as HTMLElement).focus();
-    }
+    tryFocus(document.querySelector(_selector(menu)));
 };
 
 const _selector = (menu: string): string => {
     switch (menu) {
         case "File":
-            return _selector_rootMenu(1);
+            return selectorRootMenu(1);
         case "New":
-            return _selector("File") + _selecterSubMenu(1);
+            return _selector("File") + selectorSubMenu(1);
         case "Note":
-            return _selector("New") + _selecterSubMenu(2);
+            return _selector("New") + selectorSubMenu(2);
         case "Diagram":
-            return _selector("New") + _selecterSubMenu(4);
+            return _selector("New") + selectorSubMenu(4);
         case "Open":
-            return _selector("File") + _selecterSubMenu(2);
+            return _selector("File") + selectorSubMenu(2);
         case "Edit":
-            return _selector_rootMenu(2);
+            return selectorRootMenu(2);
         case "Paste":
-            return _selector("Edit") + _selecterSubMenu(2);
+            return _selector("Edit") + selectorSubMenu(2);
         case "Undo":
-            return _selector("Edit") + _selecterSubMenu(3);
+            return _selector("Edit") + selectorSubMenu(3);
         case "Misc":
-            return _selector_rootMenu(3);
+            return selectorRootMenu(3);
         case "Tools":
-            return _selector("Misc") + _selecterSubMenu(1);
+            return _selector("Misc") + selectorSubMenu(1);
         case "Help":
-            return _selector_rootMenu(4);
+            return selectorRootMenu(4);
         case "About":
-            return _selector("Help") + _selecterSubMenu(1);
+            return _selector("Help") + selectorSubMenu(1);
         default:
             throw Error('Unknown menu ' + menu);
     }
-};
-
-const _selector_rootMenu = (pos: number) => {
-    return `.reactAppMenubar >.reactAppMenubar--menu:nth-child(${pos})`;
-};
-const _selecterSubMenu = (pos: number) => {
-    return `  > .reactAppMenubar--menu--submenus > .reactAppMenubar--menu:nth-child(${pos})`;
 };

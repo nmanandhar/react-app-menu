@@ -1,12 +1,12 @@
 import React from 'react';
-import Enzyme, {ReactWrapper} from "enzyme";
+import {ReactWrapper} from "enzyme";
 import {MenuBar} from "../menu/MenuBar";
 import {Menu} from "../menu/Menu";
 import {Keys} from "../utils/Keys";
 import sinon, {SinonSpy} from "sinon";
-import {HOTKEY, HOTKEY_DISABLED, HOTKEY_INVISIBLE, LABEL, LABEL_CONTAINER} from "../utils/classNames";
+import {HOTKEY, HOTKEY_DISABLED, HOTKEY_INVISIBLE, LABEL_CONTAINER} from "../utils/classNames";
 import expect from 'expect';
-import {getMenuLabelContainer} from "./testUtils";
+import {cleanUp, getLabelContainerElement, mount} from "./testUtils";
 
 const ctrlAlt = Keys.ctrlAlt;
 const ctrl = Keys.ctrl;
@@ -15,12 +15,6 @@ const ctrlShift = Keys.ctrlShift;
 describe('Hotkeys', () => {
     let onSelect_menuBar: SinonSpy;
     let onSelect_menu: SinonSpy;
-    const _mountedComponents: Enzyme.ReactWrapper[] = [];
-    const mount = (component: React.ReactElement) => {
-        let wrapper = Enzyme.mount(component);
-        _mountedComponents.push(wrapper);
-        return wrapper;
-    };
 
     beforeEach(() => {
         onSelect_menuBar = sinon.spy();
@@ -28,16 +22,8 @@ describe('Hotkeys', () => {
     });
 
     afterEach(() => {
-        let wrapper = _mountedComponents.pop();
-        while (wrapper) {
-            try {
-                wrapper.unmount();
-            } catch (e) {
-            }
-            wrapper = _mountedComponents.pop();
-        }
+        cleanUp();
     });
-
 
     describe('should not display', () => {
         it('for root menu', () => {
@@ -393,7 +379,7 @@ describe('Hotkeys', () => {
         });
 
         it('passing null to hotKeys does not break the app', () => {
-            let hotKeys: string[] | undefined = undefined;
+            let hotKeys: string[] | undefined;
             // @ts-ignore
             hotKeys = null;
 
@@ -403,7 +389,7 @@ describe('Hotkeys', () => {
                 </Menu>
             </MenuBar>);
 
-            let menuLabelContainer = getMenuLabelContainer(menuBar, 'New');
+            let menuLabelContainer = getLabelContainerElement(menuBar, 'New');
             let html = menuLabelContainer?.html();
             expect(html).toEqual('<div class="reactAppMenubar--menu--labelContainer"><span class="reactAppMenubar--menu--icon reactAppMenubar--menu--icon-left"></span><span class="reactAppMenubar--menu--label">New</span></div>')
         });
@@ -454,33 +440,18 @@ const trigger = (hotKey: string[]) => {
 };
 const hotKeyDisplayed = (wrapper: ReactWrapper, menu: string): boolean => {
     let hotKeyEl = getHotKeyElementWrapper(wrapper, menu);
-    if (hotKeyEl && !hotKeyEl.hasClass(HOTKEY_INVISIBLE)) {
-        return true;
-    }
-    return false;
+    return hotKeyEl.length !== 0 && !hotKeyEl.hasClass(HOTKEY_INVISIBLE);
+
 };
 const hotKeyDisabled = (wrapper: ReactWrapper, menu: string): boolean => {
     let hotKeyEl = getHotKeyElementWrapper(wrapper, menu);
-    if (hotKeyEl && hotKeyEl.hasClass(HOTKEY)) {
-        if (hotKeyEl.hasClass(HOTKEY_DISABLED)) {
-            return true;
-        } else {
-            return false;
-        }
+    if (hotKeyEl.length !== 0 && hotKeyEl.hasClass(HOTKEY)) {
+        return hotKeyEl.hasClass(HOTKEY_DISABLED);
     }
     throw new Error('Hot key is not present');
 };
 
 
 const getHotKeyElementWrapper = (wrapper: ReactWrapper, menu: string) => {
-    let hotKeyWrapper: ReactWrapper | undefined;
-    wrapper.find(`.${LABEL_CONTAINER}`).forEach(labelContainer => {
-        if (labelContainer.find(`.${LABEL}`).text() === menu) {
-            hotKeyWrapper = labelContainer.find(`.${HOTKEY}`);
-        }
-    });
-    if (hotKeyWrapper && hotKeyWrapper.length === 1) {
-        return hotKeyWrapper;
-    }
-    return null;
+    return wrapper.find(`Menu[label='${menu}']`).find(`.${LABEL_CONTAINER}`).first().find(`.${HOTKEY}`);
 };
