@@ -19,7 +19,8 @@
 
 ## Introduction
 React App Menu is a simple React component that renders navigation menu similar to desktop applications with support for hotkeys and keyboard navigation.
-It aims to do most things through css alone and relies on javascript only when absolutely necessary
+It aims to do most things through css alone and relies on javascript only when absolutely necessary. This makes the code extremely small (< 20kb) and together
+with the css, the whole library is less than 25 kb without any compression
 
 ## Installation
 ```npm
@@ -107,24 +108,26 @@ export const MenuBarDemo: React.FC = () => {
 Menubar should be the container of all menus. It provides some options that are common to all menus.
 It is also responsible for registering keyboard event handlers for navigation and hotkeys
 
-| Prop             | type                  | Required |         DefaultValue | Description                                                                                                                                           |
-| ---------------- | --------------------- | :------: | -------------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| onSelect         | (menuId:string)=>void |          |                      | A function that is called with the menuId of the menu that was clicked.<br/> This function is only called when the menu does not have its own handler |
-| expandIcon       | string / ReactNode    |          | MdKeyboardArrowRight | The icon to be displayed to indicate that a menu has submenus                                                                                         |
-| checkedIcon      | string/ ReactNode     |          |                    ✔ | The icon to be displayed on a menu that has checked=true                                                                                              |
-| hotkeys          | boolean               |          |                 true | Set it to false if you don't require hotkeys functionality                                                                                            |
-| openMenusOnHover | boolean               |          |                false | Set it to true to open menus by hovering over them                                                                                                    |
-| className        | string                |          |                      | Extra css class to add to the markup for menubar                                                                                                      |
+| Prop             | type                  | Required | DefaultValue | Description                                                                                                                                           |
+| ---------------- | --------------------- | :------: | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| onSelect         | (menuId:string)=>void |          |              | A function that is called with the menuId of the menu that was clicked.<br/> This function is only called when the menu does not have its own handler |
+| expandIcon       | string / ReactNode    |          | ⮞            | The icon to be displayed to indicate that a menu has submenus                                                                                         |
+| checkedIcon      | string/ ReactNode     |          | ✔            | The icon to be displayed on a menu that has checked=true                                                                                              |
+| enableHotKeys    | boolean               |          | true         | Set it to false if you don't require hotkeys functionality                                                                                            |
+| openMenusOnHover | boolean               |          | false        | Set it to true to open menus by hovering over them                                                                                                    |
+| className        | string                |          |              | Extra css class to add to the markup for menubar                                                                                                      |
+                                                                                              |                                                                                                   |
 
 ## Menu
 
-| Prop     | type               | Required | DefaultValue | Description                                                                                                                                                                          |
-| -------- | ------------------ | :------: | -----------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| menuId   | string             |          |              | An identifier that uniquely identifies the menu. If a menu does not have its own select handler, then the select handler of the parent menuBar is called with the menuId             |
-| label    | string / ReactNode |   true   |              | The text label for the menu                                                                                                                                                          |
-| icon     | string / ReactNode |          |              | The icon to be displayed on a menu                                                                                                                                                   |
-| onSelect | ()=>void           |          |              | A callback function to be called when this menu is clicked or its associated hotkey is pressed<br>If not provided, clicks are delegated to MenuBar onSelect                          |
-| hotKeys  | Array\<string\>    |          |              | Hotkeys are used to trigger the action for the menu. Hotkeys should be an array of form ['Ctrl','Alt','F']. You can use the Keys helper to generate this, for eg Keys.ctrlAlt('F')   |
-| checked  | boolean            |          |              | A menu that has checked true will display a checkedIcon                                                                                                                              |
-| show     | boolean            |          |         true | Set to false to hide this menu                                                                                                                                                       |
-| disabled | boolean            |          |        false | Set to true to disable this menu    
+| Prop     | type                  | Required | DefaultValue | Description                                                                                                                                                                              |
+| -------- | --------------------- | -------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| menuId   | string                |          |              | An identifier that uniquely identifies the menu. If a menu does not have its own select handler, then the select handler of the parent menuBar is called with the menuId                 |
+| label    | string / ReactNode    | true     |              | The text label for the menu                                                                                                                                                              |
+| icon     | string / ReactNode    |          |              | The icon to be displayed on a menu                                                                                                                                                       |
+| onSelect | ()=>void              |          |              | A callback function to be called when this menu is clicked or its associated hotkey is pressed<br>If not provided, clicks are delegated to MenuBar onSelect                              |
+| hotKeys  | Array\\\\<string\\\\> |          |              | Hotkeys are used to trigger the action for the menu. Hotkeys should be an array of form \\\['Ctrl','Alt','F'\\\]. You can use the Keys helper to generate this, for eg Keys.ctrlAlt('F') |
+| focusKey | string                |          |              | Only applicable for root menus. The key which when pressed with Alt will trigger open the menu, eg if File menu has focus key F, pressing Alt F will open the File menu                  |
+| checked  | boolean               |          |              | A menu that has checked true will display a checkedIcon                                                                                                                                  |
+| show     | boolean               |          | true         | Set to false to hide this menu                                                                                                                                                           |
+| disabled | boolean               |          | false        | Set to true to disable this menu                                                                                                                                                         |
