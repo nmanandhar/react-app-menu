@@ -85,38 +85,6 @@ describe('Hotkeys', () => {
         });
     });
 
-    describe('should be disabled', () => {
-        it('when no callbacks can be registered', () => {
-            let menubar = mount(
-                <MenuBar>
-                    <Menu label={'File'}>
-                        <Menu label={'New'} hotKeys={ctrlAlt('N')}/>
-                    </Menu>
-                </MenuBar>
-            );
-
-            expect(hotKeyDisplayed(menubar, 'New')).toBe(true);
-            expect(hotKeyDisabled(menubar, 'New')).toBe(true);
-
-
-            const App = ({onNewSelect}: { onNewSelect: () => void }) => (
-                <MenuBar>
-                    <Menu label={'File'}>
-                        <Menu label={'New'} hotKeys={ctrlAlt('N')} onSelect={onNewSelect}/>
-                    </Menu>
-                </MenuBar>
-            );
-
-            let app = mount(
-                <App onNewSelect={onSelect_menu}/>
-            );
-
-            app.setProps({onNewSelect: undefined});
-            expect(hotKeyDisabled(app, 'New')).toBe(true);
-        });
-    });
-
-
     describe('should not trigger', () => {
         it('for root menus', () => {
             mount(<MenuBar>
