@@ -8,10 +8,10 @@
 
 - [Introduction](#introduction)
 - [Installation](#installation)
+- [Demo](#demo)
 - [Browser Support](#browser-support)
 - [Usage](#usage)
 - [Example](#example)
-- [Demo](#demo)
 - [Props](#props)
 	- [MenuBar](#menubar)
 	- [Menu](#menu)
@@ -27,10 +27,15 @@ with the css, the whole library is less than 25 kb without any compression
 npm install react-app-menu
 ```
 
+## Demo
+
+![react-app-menu-demo](https://user-images.githubusercontent.com/9746042/79097656-fe5c4580-7d7f-11ea-983d-bfafda1c4da3.gif)
+
+
 ## Browser Support
 This component relies on the css pseudo selector focus-within to open menus. This should work on Chrome and Firefox out of the box. For 
 browsers that don't support the focus-within pseduo selector (notably IE and version of Edge prior to Edge 79), you will need to include a small
-polyfill [focus-within-polyfill](https://github.com/matteobad/focus-within-polyfill)
+polyfill [focus-within-polyfill](https://github.com/matteobad/focus-within-polyfill). The demo above is using Edge with the polyfill
 
 To use the polyfill, you can either
 1. Include the following script tag `<script src='https://unpkg.com/focus-within-polyfill/dist/focus-within-polyfill.js'></script>`
@@ -97,10 +102,6 @@ export const MenuBarDemo: React.FC = () => {
     </div>);
 };
 ```
-
-## Demo
-![react-app-menu-demo](https://user-images.githubusercontent.com/9746042/79097656-fe5c4580-7d7f-11ea-983d-bfafda1c4da3.gif)
-
 
 ## Props
 
