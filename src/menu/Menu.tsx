@@ -33,37 +33,38 @@ type MenuProps = {
 }
 
 export const Menu: React.FC<MenuProps> = ({onSelect, menuId, label, icon, hotKeys, focusKey, show = true, disabled = false, checked, children}) => {
-    const menuBarContext = useContext(MenuBarContext);
+    const menuBar = useContext(MenuBarContext);
     const longestHotkeyInSiblingMenus = useContext(MenuContext);
     const ref = useRef<HTMLLIElement>(null);
 
     const isRootMenu = longestHotkeyInSiblingMenus === null;
 
-    const isHotKeyDisabled = !hotKeys || !menuBarContext?.hotKeysEnabled || isRootMenu || children || disabled || !show || (!onSelect && (!menuId || !menuBarContext?.onSelect));
+    const isHotKeyDisabled = !hotKeys || !menuBar?.hotKeysEnabled || isRootMenu || children || disabled || !show || (!onSelect && (!menuId || !menuBar?.onSelect));
 
     useEffect(() => {
         if (hotKeys && !isHotKeyDisabled) {
             if (onSelect) {
-                menuBarContext?.registerHotKey(hotKeys, onSelect);
-            } else if (menuId && menuBarContext?.onSelect) {
-                menuBarContext.registerHotKey(hotKeys, () => {
-                    menuBarContext?.onSelect && menuBarContext?.onSelect(menuId);
+                menuBar?.registerHotKey(hotKeys, onSelect);
+            } else if (menuId && menuBar?.onSelect) {
+                menuBar.registerHotKey(hotKeys, () => {
+                    menuBar?.onSelect && menuBar?.onSelect(menuId);
                 });
             }
         }
 
-        focusKey && menuBarContext?.registerHotKey(['alt', focusKey], () => {
+        focusKey && menuBar?.registerHotKey(['alt', focusKey], () => {
             ref.current?.focus();
         });
 
         return () => {
-            hotKeys && menuBarContext?.unregisterHotKey(hotKeys);
-            focusKey && menuBarContext?.unregisterHotKey(['alt', focusKey]);
+            hotKeys && menuBar?.unregisterHotKey(hotKeys);
+            focusKey && menuBar?.unregisterHotKey(['alt', focusKey]);
         };
     }, [menuId, focusKey, onSelect, hotKeys, isHotKeyDisabled]);
 
 
-    if (!show) {
+
+    if (!show || !menuBar) {
         return null;
     } else if (isRootMenu) {
         return (
@@ -91,21 +92,23 @@ export const Menu: React.FC<MenuProps> = ({onSelect, menuId, label, icon, hotKey
             document.activeElement && (document.activeElement as HTMLElement).blur();
             if (onSelect) {
                 onSelect();
-            } else if (menuId && menuBarContext?.onSelect) {
-                menuBarContext.onSelect(menuId);
+            } else if (menuId && menuBar.onSelect) {
+                menuBar.onSelect(menuId);
             } else {
                 console.log(`No handlers found for menu ${label}`);
             }
         };
+        const hotKeysEnabled = menuBar.hotKeysEnabled;
         return (
             <li ref={ref} tabIndex={-1} className={classNames(MENU, {[MENU_DISABLED]: disabled})}>
                 <div className={LABEL_CONTAINER} onClick={clickHandler}>
-                    <span className={classNames(ICON, ICON_LEFT)}>{checked ? menuBarContext?.checkedIcon : icon}</span>
+                    <span className={classNames(ICON, ICON_LEFT)}>{checked ? menuBar.checkedIcon : icon}</span>
                     <span className={LABEL}>{label}</span>
-                    {hotKeys && !children ? <span
-                            className={classNames(HOTKEY, {[HOTKEY_DISABLED]: isHotKeyDisabled})}>{hotKeys?.join('+')}</span>
-                        : <span className={classNames(HOTKEY, HOTKEY_INVISIBLE)}>{longestHotkeyInSiblingMenus}</span>}
-                    {children && <span className={classNames(ICON, ICON_RIGHT)}>{menuBarContext?.expandIcon}</span>}
+                    {hotKeysEnabled && hotKeys && !children && <span
+                        className={classNames(HOTKEY, {[HOTKEY_DISABLED]: isHotKeyDisabled})}>{hotKeys.join('+')}</span>}
+                    {hotKeysEnabled && !hotKeys && longestHotkeyInSiblingMenus &&
+                    <span className={classNames(HOTKEY, HOTKEY_INVISIBLE)}>{longestHotkeyInSiblingMenus}</span>}
+                    {children && <span className={classNames(ICON, ICON_RIGHT)}>{menuBar.expandIcon}</span>}
                 </div>
                 {children && !disabled && (
                     <ul className={SUBMENUS}>

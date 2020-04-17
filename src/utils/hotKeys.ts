@@ -46,9 +46,6 @@ export const keyWithModifiers = (event: KeyboardEvent): string[] | null => {
  * @param hotKeys
  */
 export const normalizeKey = (hotKeys: string[]): string | null => {
-    if (!hotKeys) {
-        return null;
-    }
     let keys = hotKeys.slice().map(key => key.toLowerCase());
     let modifierKeys = [];
 

@@ -15,11 +15,8 @@ export const firstChildMenu = (currentMenu: Element | null): Element | null => {
 
 export const nextRootMenu = (currentMenu: Element | null, direction: 'LEFT' | 'RIGHT'): Element | null => {
     let thisRootMenu = isRootMenu(currentMenu) ? currentMenu : ancestor(currentMenu, MENU_ROOT, 10);
-    if (thisRootMenu) {
-        return direction === 'RIGHT' ? nextSibling(thisRootMenu, MENU_ROOT, MENU_DISABLED) :
-            prevSibling(thisRootMenu, MENU_ROOT, MENU_DISABLED);
-    }
-    return null;
+    return direction === 'RIGHT' ? nextSibling(thisRootMenu, MENU_ROOT, MENU_DISABLED) :
+        prevSibling(thisRootMenu, MENU_ROOT, MENU_DISABLED);
 };
 
 export const parentMenu = (activeMenu: Element | null): Element | null => {
@@ -27,9 +24,6 @@ export const parentMenu = (activeMenu: Element | null): Element | null => {
 };
 
 export const nextMenu = (activeMenu: Element | null, direction: 'UP' | 'DOWN'): Element | null => {
-    if (!activeMenu) {
-        return null;
-    }
     let nextMenu = direction === 'DOWN' ? nextSibling(activeMenu, MENU, MENU_DISABLED) : prevSibling(activeMenu, MENU, MENU_DISABLED);
     if (nextMenu) {
         return nextMenu;

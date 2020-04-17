@@ -177,6 +177,23 @@ describe('Keyboard Navigation (Default props)', () => {
             });
         });
 
+        describe('UP key', () => {
+            it('should move to previous menu that is not disabled', () => {
+                focusOnMenu('Diagram');
+                key(Key.UP);
+                expect(activeMenu()).toBe('Note');
+            });
+
+            it('should cycle back to the bottom menu after there are no more menu items below', () => {
+                focusOnMenu('Diagram');
+                key(Key.UP);
+                expect(activeMenu()).toBe('Note');
+                key(Key.UP);
+                expect(activeMenu()).toBe('Diagram');
+
+            });
+        });
+
         describe('RIGHT key', () => {
             it('should move to the subMenu item if available', () => {
                 focusOnMenu("New");
@@ -267,6 +284,8 @@ const _selector = (menu: string): string => {
             return _selector("File") + _selecterSubMenu(1);
         case "Note":
             return _selector("New") + _selecterSubMenu(2);
+        case "Diagram":
+            return _selector("New") + _selecterSubMenu(4);
         case "Open":
             return _selector("File") + _selecterSubMenu(2);
         case "Edit":

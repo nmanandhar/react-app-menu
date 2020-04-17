@@ -3,30 +3,30 @@
  */
 export class Keys {
     static ctrl(key: string) {
-        return ["Ctrl", key];
+        return ["ctrl", key.trim()];
     }
 
     static alt(key: string) {
-        return ["Alt", key.trim()]
+        return ["alt", key.trim()]
     }
 
     static shift(key: string) {
-        return ["Shift", key.trim()];
+        return ["shift", key.trim()];
     }
 
     static ctrlAlt(key: string) {
-        return ["Ctrl", "Alt", key];
+        return ["ctrl", "alt", key];
     }
 
     static ctrlShift(key: string) {
-        return ["Ctrl", "Shift", key.trim()];
+        return ["ctrl", "shift", key.trim()];
     }
 
     static altShift(key: string) {
-        return ["Alt", "Shift", key.trim()];
+        return ["alt", "shift", key.trim()];
     }
 
     static ctrlAltShift(key: string) {
-        return ["Ctrl","Alt", "Shift", key.trim()];
+        return ["ctrl","alt", "shift", key.trim()];
     }
 }
