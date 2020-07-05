@@ -63,10 +63,11 @@ export const Menu: React.FC<MenuProps> = ({onSelect, menuId, label, icon, hotKey
         return null;
     } else if (isRootMenu) {
         return (
-            <li ref={ref} tabIndex={0} className={classNames(MENU, MENU_ROOT, {[MENU_DISABLED]: disabled})}>
-                <div className={LABEL_CONTAINER}>
-                    {icon && <span className={classNames(ICON, ICON_ROOT)}>{icon}</span>}
-                    <span className={LABEL}>{focusKey && label.includes(focusKey) ?
+            <li ref={ref} tabIndex={0}
+                className={classNames(`reactAppMenubar--menu`, MENU_ROOT, {[`reactAppMenubar--menu-isDisabled`]: disabled})}>
+                <div className={`reactAppMenubar--menu--labelContainer`}>
+                    {icon && <span className={classNames(`reactAppMenubar--menu--icon`, ICON_ROOT)}>{icon}</span>}
+                    <span className={`reactAppMenubar--menu--label`}>{focusKey && label.includes(focusKey) ?
                         <>
                             <span>{label.substr(0, label.indexOf(focusKey))}</span>
                             <span className={LABEL_EM}>{focusKey}</span>
@@ -75,7 +76,7 @@ export const Menu: React.FC<MenuProps> = ({onSelect, menuId, label, icon, hotKey
                         : label}
                     </span>
                 </div>
-                {children && !disabled && (<ul className={SUBMENUS}>
+                {children && !disabled && (<ul className={`reactAppMenubar--menu--submenus`}>
                         <MenuContext.Provider value={getLongestHotkeyInChildren(children)}>
                             {children}
                         </MenuContext.Provider>
@@ -84,6 +85,19 @@ export const Menu: React.FC<MenuProps> = ({onSelect, menuId, label, icon, hotKey
             </li>);
     } else {
         const clickHandler = children || disabled ? undefined : () => {
+            selectMenu();
+        };
+
+        const keyDownHandler: React.KeyboardEventHandler | undefined = children || disabled ? undefined : (e) => {
+            if (e.key === "Enter") {
+                selectMenu();
+            }
+        }
+
+        const selectMenu = () => {
+            if ((typeof menuBar.disableMenubar === "boolean" && menuBar.disableMenubar) || (typeof menuBar.disableMenubar === "function" && menuBar.disableMenubar() === true)) {
+                return;
+            }
             document.activeElement && (document.activeElement as HTMLElement).blur();
             if (onSelect) {
                 onSelect();
@@ -92,9 +106,11 @@ export const Menu: React.FC<MenuProps> = ({onSelect, menuId, label, icon, hotKey
             } else {
                 console.warn(`No handlers found for menu ${label}`);
             }
-        };
+        }
+
         return (
-            <li ref={ref} tabIndex={-1} className={classNames(MENU, {[MENU_DISABLED]: disabled})}>
+            <li ref={ref} tabIndex={-1} className={classNames(MENU, {[MENU_DISABLED]: disabled})}
+                onKeyDown={keyDownHandler}>
                 <div className={LABEL_CONTAINER} onClick={clickHandler}>
                     <span className={classNames(ICON, ICON_LEFT)}>{checked ? menuBar.checkedIcon : icon}</span>
                     <span className={LABEL}>{label}</span>
