@@ -1,11 +1,17 @@
+$prefix: --reactAppMenu;
 $menu-background: #fff;
-$menu-background-focus: #ddd;
-$menu-background-hover: cornflowerblue;
-$menu-border: #ccc;
-$menu-shadow: rgba(60, 64, 67, .15);
-$menu-text-hover: white;
+$menu-background-focus: rgba(#2675BF, .86);
+$menu-text-focus: #FDFDFD;
+$menu-background-hover: rgb(226, 239, 248);
+$menu-text-hover: inherit;
+$menu-border: #999;
+$menu-shadow: rgba(60, 64, 67, .45);
 $menu-z-index: 100;
 $separator-border: rgb(218, 220, 224);
+$menu-border-radius: 0;
+$menu-shadow: 2px 2px 6px $menu-shadow;
+$menu-minWidth: 150px;
+
 
 // display menubar as row flex so that root menus are placed one after another
 ul.reactAppMenubar {
@@ -14,11 +20,12 @@ ul.reactAppMenubar {
   padding: 0;
   margin: 0;
   user-select: none;
+  outline: none;
 }
 
 // menu separator have a 1px border
 .reactAppMenubar--menu-separator {
-  border-bottom: 1px solid $separator-border;
+  border-bottom: 1px solid var(#{$prefix}-color-separator, #{$separator-border});
 }
 
 // place submenus relative to menu
@@ -33,24 +40,24 @@ ul.reactAppMenubar--menu--submenus {
   position: absolute;
   z-index: $menu-z-index;
   list-style: none;
-  padding: 0 ;
+  padding: 0;
   margin: 0;
-  background: $menu-background;
-  border: 1px solid $menu-border;
-  box-shadow: 0 2px 6px 2px $menu-shadow;
-  border-radius: 4px;
+  background: var(#{$prefix}-color-bg, #{$menu-background});
+  border: 1px solid var(#{$prefix}-color-border, #{$menu-border});
+  box-shadow: var(#{$prefix}-shadow, #{$menu-shadow});
+  border-radius: var(#{$prefix}-border-radius, #{$menu-border-radius});
 }
 
 //place submenus to the right
 .reactAppMenubar--menu:not(.reactAppMenubar--menu-root) > .reactAppMenubar--menu--submenus {
   top: 0;
-  left: 100%;
+  left: calc(100% - 1px);
 }
 
 // highlight menus on hover
-.reactAppMenubar--menu:hover:not(.reactAppMenubar--menu-root):not(.reactAppMenubar--menu-isDisabled) > .reactAppMenubar--menu--labelContainer {
-  background: $menu-background-hover;
-  color: $menu-text-hover;
+.reactAppMenubar--menu:hover:not(.reactAppMenubar--menu-root):not(.reactAppMenubar--menu-isDisabled):not(:focus-within) > .reactAppMenubar--menu--labelContainer {
+  background: var(#{$prefix}-color-bg-hover, #{$menu-background-hover});
+  color: var(#{$prefix}-color-text-hover, #{$menu-text-hover});
 }
 
 //when a menu is focussed, it submenus should be displayed
@@ -66,13 +73,7 @@ ul.reactAppMenubar--menu--submenus {
 
 // when a menu or its submenus has focus, it's background should be changed
 .reactAppMenubar--menu:focus-within > .reactAppMenubar--menu--labelContainer {
-  background: $menu-background-focus;
-}
-
-// when a root menu or its submenus has focus, it should be diplayed in hovered color
-.reactAppMenubar--menu-root:focus-within > .reactAppMenubar--menu--labelContainer {
-  background: $menu-background-hover;
-  color: $menu-text-hover;
+  background: var(#{$prefix}-color-bg-focus, #{$menu-background-focus});
 }
 
 // Gray out disabled items
@@ -93,7 +94,12 @@ ul.reactAppMenubar--menu--submenus {
 }
 
 .reactAppMenubar--menu:not(.reactAppMenubar--menu-root) > .reactAppMenubar--menu--labelContainer {
-  min-width: 150px;
+  min-width: var(#{$prefix}-minwidth, #{$menu-minWidth});
+  height: var(#{$prefix}-height-label-submenu);
+}
+
+.reactAppMenubar--menu.reactAppMenubar--menu-root > .reactAppMenubar--menu--labelContainer {
+  height: var(#{$prefix}-height-label-root);
 }
 
 .reactAppMenubar--menu--icon {
@@ -110,11 +116,11 @@ ul.reactAppMenubar--menu--submenus {
 }
 
 .reactAppMenubar--menu--icon-left {
-  margin-right: 8px;
+  margin-right: 4px;
 }
 
 .reactAppMenubar--menu--icon-right {
-  margin-left: 8px;
+  margin-left: 4px;
 }
 
 

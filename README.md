@@ -49,6 +49,25 @@ events and adds a .focus-within class as necessary.
 Simply import MenuBar and Menu and start composing your menu. A css is also provided in `dist/styles/react-app-menu.css`.
 **Be sure to import the css**
 
+## Customizing the themes
+In order to customize the look of the menu, certain css variables are provided that you can override on your menu
+
+| Prop             | Description                  | 
+| ---------------- | --------------------- |
+--reactAppMenu-color-bg | Background color of menu
+--reactAppMenu-color-text | Text color of menu
+--reactAppMenu-color-bg-hover | Background color of menu when hovered
+--reactAppMenu-color-text-hover | Text color of menu when hovered
+--reactAppMenu-color-bg-focus |  Background color of menu when clicked /focussed
+--reactAppMenu-color-text-focus | Text color of menu when clicked /focussed
+--reactAppMenu-color-border | Border color of menu
+--reactAppMenu-color-border-separator | Color for menu separator
+--reactAppMenu-border-radius | Border radius of menu
+--reactAppMenu-shadow | Shadow for the menu
+--reactAppMenu-label-submenu | Height of submenu items
+--reactAppMenu-label-root | Height of root menu item
+                                           
+
 ## Example
 
 ```tsx
