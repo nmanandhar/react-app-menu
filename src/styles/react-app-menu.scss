@@ -74,6 +74,7 @@ ul.reactAppMenubar--menu--submenus {
 // when a menu or its submenus has focus, it's background should be changed
 .reactAppMenubar--menu:focus-within > .reactAppMenubar--menu--labelContainer {
   background: var(#{$prefix}-color-bg-focus, #{$menu-background-focus});
+  color: var(#{$prefix}-color-text-focus, #{$menu-text-focus});
 }
 
 // Gray out disabled items

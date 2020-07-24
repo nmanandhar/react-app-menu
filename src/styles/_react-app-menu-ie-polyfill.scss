@@ -15,10 +15,10 @@ See https://github.com/matteobad/focus-within-polyfill
 
 // when a menu has focus, it's background should be changed
 .reactAppMenubar--menu:focus > .reactAppMenubar--menu--labelContainer {
-  background: $menu-background-focus;
+  background: var(#{$prefix}-color-bg-focus, #{$menu-background-focus});
 }
 .reactAppMenubar--menu.focus-within > .reactAppMenubar--menu--labelContainer{
-  background: $menu-background-focus;
+  background: var(#{$prefix}-color-bg-focus, #{$menu-background-focus});
 }
 
 // when a root menu or its submenus has focus, it should be diplayed in hovered color

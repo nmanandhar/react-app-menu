@@ -31,9 +31,10 @@ type MenuProps = {
     disabled?: boolean;
     checked?: boolean;
     onSelect?: () => void,
+    closeOnSelect?: boolean,
 }
 
-export const Menu: React.FC<MenuProps> = ({onSelect, menuId, label, icon, hotKeys, focusKey, show = true, disabled = false, checked, children}) => {
+export const Menu: React.FC<MenuProps> = ({onSelect, menuId, label, icon, hotKeys, focusKey, show = true, disabled = false, checked, children, closeOnSelect}) => {
     const menuBar = useContext(MenuBarContext);
     const longestSiblingHotkey = useContext(MenuContext);
     const ref = useRef<HTMLLIElement>(null);
@@ -98,7 +99,11 @@ export const Menu: React.FC<MenuProps> = ({onSelect, menuId, label, icon, hotKey
             if ((typeof menuBar.disableMenubar === "boolean" && menuBar.disableMenubar) || (typeof menuBar.disableMenubar === "function" && menuBar.disableMenubar() === true)) {
                 return;
             }
-            document.activeElement && (document.activeElement as HTMLElement).blur();
+
+            if (closeOnSelect === false) {
+            } else {
+                document.activeElement && (document.activeElement as HTMLElement).blur();
+            }
             if (onSelect) {
                 onSelect();
             } else if (menuId && menuBar.onSelect) {
